@@ -1,0 +1,138 @@
+:root {
+  /* iPhone 15 / 16 logical size */
+  --screen-w: 393px;
+  --screen-h: 852px;
+  --bezel: 12px;
+  --screen-radius: 55px;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bg: #ffffff;
+  --label: #000000;
+  --secondary-label: rgba(60, 60, 67, 0.6);
+
+  --safe-top: 59px;     /* status bar + dynamic island */
+  --safe-bottom: 34px;  /* home indicator */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --label: #ffffff;
+    --secondary-label: rgba(235, 235, 245, 0.6);
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font);
+  background: #e9e9ee;
+  display: grid;
+  place-items: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Device (desktop) ---------- */
+
+.device {
+  width: calc(var(--screen-w) + var(--bezel) * 2);
+  height: calc(var(--screen-h) + var(--bezel) * 2);
+  padding: var(--bezel);
+  background: #111;
+  border-radius: calc(var(--screen-radius) + var(--bezel));
+  box-shadow:
+    0 0 0 2px #3a3a3c,
+    0 30px 80px rgba(0, 0, 0, 0.35);
+  /* Scale down on short windows so the whole phone is visible */
+  zoom: min(1, calc((100vh - 40px) / (var(--screen-h) + var(--bezel) * 2 + 1px)));
+}
+
+.screen {
+  position: relative;
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: var(--bg);
+  color: var(--label);
+  border-radius: var(--screen-radius);
+  overflow: hidden;
+}
+
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  width: 124px;
+  height: 36px;
+  transform: translateX(-50%);
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  padding: 0 32px 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  font-weight: 600;
+  z-index: 9;
+}
+
+.statusbar-icons { display: flex; align-items: center; gap: 6px; }
+
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 139px;
+  height: 5px;
+  transform: translateX(-50%);
+  background: var(--label);
+  border-radius: 3px;
+  z-index: 10;
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  padding: var(--safe-top) 20px var(--safe-bottom);
+  overflow-y: auto;
+}
+
+/* ---------- Real phone: drop the frame, go full-bleed ---------- */
+
+@media (max-width: 500px) {
+  body { display: block; background: var(--bg); }
+
+  .device {
+    width: 100%;
+    height: 100dvh;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    zoom: 1;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  /* The real status bar, island and home indicator are the phone's own */
+  .island, .statusbar, .home-indicator { display: none; }
+
+  .content {
+    padding-top: calc(env(safe-area-inset-top) + 12px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
