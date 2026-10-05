@@ -1,23 +1,19 @@
-/* Greyscale theme: every color here must have zero saturation (r = g = b).
-   Overrides the shell's slightly blue-tinted defaults for content inside the phone. */
+/* Light, greyscale theme: every color here must have zero saturation (r = g = b).
+   Always light, regardless of the device's dark-mode setting. These declarations come after
+   shell/device.css, so they override its dark-mode and slightly blue-tinted defaults. */
 :root {
-  --accent: #000000;
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --label: #000000;
   --secondary-label: rgba(0, 0, 0, 0.55);
+  --accent: #000000;
   --tab-inactive: #8e8e8e;
   --separator: rgba(0, 0, 0, 0.2);
   --bar-bg: rgba(249, 249, 249, 0.94);
 
   --app-top: var(--safe-top);
   --app-bottom: var(--safe-bottom);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --accent: #ffffff;
-    --secondary-label: rgba(255, 255, 255, 0.6);
-    --separator: rgba(255, 255, 255, 0.2);
-    --bar-bg: rgba(22, 22, 22, 0.94);
-  }
 }
 
 /* On a real phone the shell hides its fake chrome and the OS safe areas apply */
