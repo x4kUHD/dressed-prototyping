@@ -39,6 +39,14 @@ All prototype work happens in `app/`. Everything the user sees inside the phone 
 - Keep paths relative so the site works under a GitHub Pages subpath (`/repo-name/`). Never use root-absolute paths like `/app/...`.
 - Don't add dependencies, bundlers, or CDN scripts without asking.
 
+## Icons
+
+**Use icons ONLY from [Tabler Icons](https://tabler.io/icons).** Never draw custom icons, use emoji as icons, or pull from other sets (SF Symbols, Font Awesome, Material, Heroicons, etc.). If Tabler has no matching icon, pick the closest Tabler one or ask the user.
+
+- Copy the SVG for each icon you use into `app/icons/<name>.svg` (e.g. `app/icons/home.svg`, `app/icons/home-filled.svg`), or inline it. Don't load Tabler through a CDN or npm package.
+- Keep the original Tabler SVG attributes (`stroke="currentColor"`, `stroke-width`, 24x24 viewBox) so icons inherit text color. Resize with CSS `width`/`height`, not by editing the paths.
+- Use the `outline` style by default and the `filled` variant for selected or active states, as iOS does.
+
 ## Testing
 
 Serve locally with `python3 -m http.server` and open `localhost:8000`. Modules won't load over `file://`. Check both the desktop framed view and the narrow (≤500px) full-bleed view.
