@@ -1,2 +1,74 @@
+/* Greyscale theme: every color here must have zero saturation (r = g = b).
+   Overrides the shell's slightly blue-tinted defaults for content inside the phone. */
+:root {
+  --accent: #000000;
+  --secondary-label: rgba(0, 0, 0, 0.55);
+  --tab-inactive: #8e8e8e;
+  --separator: rgba(0, 0, 0, 0.2);
+  --bar-bg: rgba(249, 249, 249, 0.94);
+
+  --app-top: var(--safe-top);
+  --app-bottom: var(--safe-bottom);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #ffffff;
+    --secondary-label: rgba(255, 255, 255, 0.6);
+    --separator: rgba(255, 255, 255, 0.2);
+    --bar-bg: rgba(22, 22, 22, 0.94);
+  }
+}
+
+/* On a real phone the shell hides its fake chrome and the OS safe areas apply */
+@media (max-width: 500px) {
+  :root {
+    --app-top: calc(env(safe-area-inset-top) + 12px);
+    --app-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* The prototype owns the whole screen: layout is handled by .app-root below */
+#app { padding: 0; overflow: hidden; }
+
+.app-root { display: flex; flex-direction: column; height: 100%; }
+
+.app-screen {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--app-top) 20px 16px;
+}
+
 .large-title { font-size: 34px; font-weight: 700; margin-top: 12px; }
 .subtitle { margin-top: 8px; font-size: 17px; color: var(--secondary-label); }
+
+/* ---------- Tab bar ---------- */
+
+.tabbar {
+  flex: none;
+  display: flex;
+  padding-bottom: var(--app-bottom);
+  background: var(--bar-bg);
+  border-top: 0.5px solid var(--separator);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.tab {
+  flex: 1;
+  height: 49px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--tab-inactive);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab svg { width: 28px; height: 28px; }
+.tab-label { font-size: 10px; font-weight: 500; }
+
+.tab[aria-current="page"] { color: var(--accent); }

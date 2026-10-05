@@ -34,7 +34,8 @@ All prototype work happens in `app/`. Everything the user sees inside the phone 
 ## Conventions
 
 - Plain JS with ES modules. Add `// @ts-check` and JSDoc types to new JS files.
-- Use the existing CSS custom properties (`--bg`, `--label`, `--secondary-label`, `--font`). Support light and dark mode.
+- **Greyscale only, for now.** Every color inside the phone must be neutral (black, white, or grey where r = g = b). No blue, red, green, or any other hue, including for links, selected states, badges, and errors. Show emphasis with weight, contrast, size, or filled-vs-outline instead of color. Photos and user imagery are the only exception.
+- Use the existing CSS custom properties (`--bg`, `--label`, `--secondary-label`, `--accent`, `--separator`, `--font`) instead of hard-coded colors, and define any new color as a greyscale token in `app/app.css`. Support light and dark mode.
 - Match iOS conventions: SF font stack, 17px body text, 44px minimum tap targets, system-style spacing.
 - Keep paths relative so the site works under a GitHub Pages subpath (`/repo-name/`). Never use root-absolute paths like `/app/...`.
 - Don't add dependencies, bundlers, or CDN scripts without asking.
