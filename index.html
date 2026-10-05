@@ -40,7 +40,14 @@
     </div>
   </div>
 
-  <script type="module" src="shell/device.js"></script>
-  <script type="module" src="app/main.js"></script>
+  <!-- Classic scripts, run in this order, so the page works from file:// -->
+  <script defer src="shell/device.js"></script>
+  <script defer src="app/core.js"></script>
+  <script defer src="app/icons.js"></script>
+  <script defer src="app/components/tabbar.js"></script>
+  <script defer src="app/screens/closet.js"></script>
+  <script defer src="app/screens/discovery.js"></script>
+  <script defer src="app/screens/camera.js"></script>
+  <script defer src="app/main.js"></script>
 </body>
 </html>

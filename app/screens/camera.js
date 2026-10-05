@@ -1,5 +1,2 @@
 // @ts-check
-
-export function camera() {
-  return `<h1 class="large-title">Camera</h1>`;
-}
+App.screens.camera = () => `<h1 class="large-title">Camera</h1>`;

@@ -1,30 +1,22 @@
 // @ts-check
-import { preloadIcons } from "./components/icon.js";
-import { tabbar, tabIcons, tabs } from "./components/tabbar.js";
-import { closet } from "./screens/closet.js";
-import { discovery } from "./screens/discovery.js";
-import { camera } from "./screens/camera.js";
+(() => {
+  const app = document.getElementById("app");
 
-/** @type {Record<string, () => string>} */
-const screens = { closet, discovery, camera };
+  function currentTab() {
+    const id = location.hash.slice(1);
+    return id in App.screens ? id : App.tabs[0].id;
+  }
 
-const app = document.getElementById("app");
+  function render() {
+    if (!app) return;
+    const id = currentTab();
+    app.innerHTML = `
+      <div class="app-root">
+        <div class="app-screen">${App.screens[id]()}</div>
+        ${App.components.tabbar(id)}
+      </div>`;
+  }
 
-function currentTab() {
-  const id = location.hash.slice(1);
-  return id in screens ? id : tabs[0].id;
-}
-
-function render() {
-  if (!app) return;
-  const id = currentTab();
-  app.innerHTML = `
-    <div class="app-root">
-      <div class="app-screen">${screens[id]()}</div>
-      ${tabbar(id)}
-    </div>`;
-}
-
-await preloadIcons(tabIcons);
-render();
-addEventListener("hashchange", render);
+  render();
+  addEventListener("hashchange", render);
+})();

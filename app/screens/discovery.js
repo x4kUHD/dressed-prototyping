@@ -1,5 +1,2 @@
 // @ts-check
-
-export function discovery() {
-  return `<h1 class="large-title">Discovery</h1>`;
-}
+App.screens.discovery = () => `<h1 class="large-title">Discovery</h1>`;
