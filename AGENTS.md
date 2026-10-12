@@ -1,5 +1,7 @@
 # Agent Guidelines
 
+> `CLAUDE.md` and `GEMINI.md` are symlinks to this file. Edit only `AGENTS.md`; never replace the symlinks with real files.
+
 This repo is a pure HTML/CSS/JS iOS simulator for UX prototypes, published via GitHub Pages. No build step, no frameworks, no npm. **It must work when `index.html` is opened directly from disk (`file://`) as well as on GitHub Pages.**
 
 ## Structure
