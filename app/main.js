@@ -2,17 +2,18 @@
 (() => {
   const app = document.getElementById("app");
 
-  function currentTab() {
-    const id = location.hash.slice(1);
-    return id in App.screens ? id : App.tabs[0].id;
+  /** @returns {{ id: string, sub?: string }} tab id plus optional sub-view, from `#tab/sub` */
+  function currentRoute() {
+    const [id, sub] = location.hash.slice(1).split("/");
+    return { id: id in App.screens ? id : App.tabs[0].id, sub };
   }
 
   function render() {
     if (!app) return;
-    const id = currentTab();
+    const { id, sub } = currentRoute();
     app.innerHTML = `
       <div class="app-root">
-        <div class="app-screen">${App.screens[id]()}</div>
+        <div class="app-screen">${App.screens[id](sub)}</div>
         ${App.components.tabbar(id)}
       </div>`;
   }

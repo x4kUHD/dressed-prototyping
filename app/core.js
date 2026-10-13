@@ -7,7 +7,7 @@ var App = {
   icons: {},
   /** @type {Record<string, (...args: any[]) => string>} */
   components: {},
-  /** @type {Record<string, () => string>} */
+  /** @type {Record<string, (sub?: string) => string>} */
   screens: {},
 };
 
