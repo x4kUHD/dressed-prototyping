@@ -25,9 +25,16 @@
 }
 
 /* The prototype owns the whole screen: layout is handled by .app-root below */
-#app { padding: 0; overflow: hidden; }
+#app {
+  padding: 0;
+  overflow: hidden;
+}
 
-.app-root { display: flex; flex-direction: column; height: 100%; }
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 
 .app-screen {
   flex: 1;
@@ -36,8 +43,17 @@
   padding: var(--app-top) 20px 16px;
 }
 
-.large-title { font-size: 34px; font-weight: 700; margin-top: 12px; }
-.subtitle { margin-top: 8px; font-size: 17px; color: var(--secondary-label); }
+.large-title {
+  font-size: 34px;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 17px;
+  color: var(--secondary-label);
+}
 
 /* ---------- Tab bar ---------- */
 
@@ -64,10 +80,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.tab svg { width: 28px; height: 28px; }
-.tab-label { font-size: 10px; font-weight: 500; }
+.tab svg {
+  width: 28px;
+  height: 28px;
+}
 
-.tab[aria-current="page"] { color: var(--accent); }
+.tab-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.tab[aria-current="page"] {
+  color: var(--accent);
+}
 
 /* ---------- Segmented control ---------- */
 
