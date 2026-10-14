@@ -11,9 +11,10 @@
   function render() {
     if (!app) return;
     const { id, sub } = currentRoute();
+    const isFlush = id === "discovery" && sub === "look";
     app.innerHTML = `
       <div class="app-root">
-        <div class="app-screen">${App.screens[id](sub)}</div>
+        <div class="app-screen ${isFlush ? "app-screen-flush" : ""}">${App.screens[id](sub)}</div>
         ${App.components.tabbar(id)}
       </div>`;
   }
