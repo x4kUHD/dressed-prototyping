@@ -2,10 +2,10 @@
 (() => {
   const app = document.getElementById("app");
 
-  /** @returns {{ id: string, sub?: string }} tab id plus optional sub-view, from `#tab/sub` */
+  /** @returns {{ id: string, sub?: string }} tab id plus optional sub-path, from `#tab/sub/...` */
   function currentRoute() {
-    const [id, sub] = location.hash.slice(1).split("/");
-    return { id: id in App.screens ? id : App.tabs[0].id, sub };
+    const [id, ...rest] = location.hash.slice(1).split("/");
+    return { id: id in App.screens ? id : App.tabs[0].id, sub: rest.join("/") || undefined };
   }
 
   function render() {
