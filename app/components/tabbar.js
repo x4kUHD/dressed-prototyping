@@ -8,7 +8,7 @@
   const tabs = [
     { id: "closet", label: "Closet", icon: "hanger-2" },
     { id: "discovery", label: "Discovery", icon: "compass" },
-    { id: "camera", label: "Post", icon: "camera" },
+    { id: "camera", label: "Camera", icon: "camera" },
   ];
 
   /**

@@ -1,2 +1,3 @@
 // @ts-check
-App.screens.camera = (sub) => App.screens.post(sub || "from-camera");
+// Empty for now: the Camera tab has no content yet.
+App.screens.camera = () => "";
