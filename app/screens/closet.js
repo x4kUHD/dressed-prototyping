@@ -30,6 +30,12 @@
     { id: "night-out", name: "Night Out", itemIds: ["linen-blouse", "black-jeans"] },
   ];
 
+  /** Pill link to Saved Outfits: icon + label + count, so it reads as outfits, not generic favorites. */
+  const outfitsButton = () => `
+    <a class="outfits-pill" href="#closet/outfits" aria-label="Saved outfits, ${outfits.length}">
+      ${App.icon("hanger-2")}<span>Outfits</span><span class="outfits-count">${outfits.length}</span>
+    </a>`;
+
   /** @param {string} id */
   const categoryLabel = (id) => categories.find((c) => c.id === id)?.label ?? "";
 
@@ -48,7 +54,7 @@
           <h1 class="large-title">My Closet</h1>
           <p class="closet-count">${countLabel(activeId)}</p>
         </div>
-        <a class="icon-button" href="#closet/outfits" aria-label="Saved outfits">${App.icon("bookmark-filled")}</a>
+        ${outfitsButton()}
       </header>
       <div class="search-field">${App.icon("search")}<span>Search Your Closet</span></div>
       <div class="chips">
@@ -76,7 +82,7 @@
     return `
       <header class="detail-top">
         <a class="back-link" href="#closet/${back}">${App.icon("chevron-left")}${categoryLabel(back)}</a>
-        <a class="icon-button" href="#closet/outfits" aria-label="Saved outfits">${App.icon("bookmark-filled")}</a>
+        ${outfitsButton()}
       </header>
       <div class="detail-actions">
         <button class="icon-button" type="button" aria-label="Edit item">${App.icon("pencil")}</button>

@@ -271,3 +271,30 @@
 .sticky-bar .btn { margin-top: 0; }
 .btn:disabled { opacity: 0.35; cursor: default; }
 .btn { display: flex; align-items: center; justify-content: center; text-decoration: none; }
+
+.outfits-pill {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--label);
+  border-radius: 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.outfits-pill svg { width: 22px; height: 22px; }
+.outfits-count {
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--label);
+  color: var(--bg);
+  font-size: 13px;
+}
