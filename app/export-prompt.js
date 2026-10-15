@@ -25,6 +25,9 @@
     return null;
   };
 
+  /** Published prototype; the prompt links here so the implementer can open the real screen. */
+  const PAGES_URL = "https://x4kuhd.github.io/dressed-prototyping/";
+
   const INLINE = new Set(["SPAN", "STRONG", "EM", "B", "I", "SMALL"]);
 
   /** @param {string} v e.g. "16px" @returns {number} */
@@ -224,6 +227,7 @@ CONTEXT
       "",
       "SCREEN",
       `- Route: ${location.hash || `#${screen}`}`,
+      `- Live prototype (open to see and interact with this screen): ${PAGES_URL}${location.hash || `#${screen}`}`,
       `- Prototype source (HTML/CSS reference): app/screens/${screen}.js, app/app.css`,
       `- Tab bar: ${App.fullscreen.has(screen) ? "hidden (full-screen flow)" : "shown"}`,
       "",
