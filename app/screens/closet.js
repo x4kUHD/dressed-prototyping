@@ -121,12 +121,12 @@
               .map(
                 (o) => `
           <div class="item-card">
-            ${outfitPhoto(o.itemIds)}
+            <a class="card-link" href="#closet/outfit/${o.id}" aria-label="${esc(o.name)}">${outfitPhoto(o.itemIds)}</a>
             <div class="outfit-meta">
-              <div class="outfit-meta-text">
+              <a class="outfit-meta-text card-link" href="#closet/outfit/${o.id}">
                 <div class="item-name">${esc(o.name)}</div>
                 <div class="item-category">${o.itemIds.length} items</div>
-              </div>
+              </a>
               <button class="icon-button edit-button" type="button" data-action="edit-outfit" data-outfit="${o.id}" aria-label="Edit ${esc(o.name)}">${App.icon("pencil")}</button>
             </div>
           </div>`,
@@ -134,6 +134,34 @@
               .join("")}</div>`
           : '<p class="subtitle">No saved outfits use this item yet.</p>'
       }`;
+  }
+
+  /** @param {string} id outfit id */
+  function outfitDetail(id) {
+    const outfit = outfits.find((o) => o.id === id);
+    if (!outfit) return savedOutfits();
+    const pieces = outfit.itemIds.flatMap((i) => items.find((x) => x.id === i) ?? []);
+    return `
+      <header class="detail-top">
+        <a class="back-link" href="#closet/outfits">${App.icon("chevron-left")}Saved Outfits</a>
+        <button class="icon-button" type="button" data-action="edit-outfit" data-outfit="${outfit.id}" aria-label="Edit ${esc(outfit.name)}">${App.icon("pencil")}</button>
+      </header>
+      <div class="outfit-hero">${outfitPhoto(outfit.itemIds)}</div>
+      <h1 class="detail-heading">${esc(outfit.name)}</h1>
+      <p class="closet-count">${pieces.length} ${pieces.length === 1 ? "item" : "items"}</p>
+      <div class="item-grid">
+        ${pieces
+          .map(
+            (i) => `
+          <a class="item-card" href="#closet/item/${i.id}">
+            <div class="item-photo" role="img" aria-label="${i.name}"></div>
+            <div class="item-name">${i.name}</div>
+            <div class="item-category">${categoryLabel(i.category)}</div>
+          </a>`,
+          )
+          .join("")}
+      </div>
+      <button class="btn btn-primary" type="button" data-action="edit-outfit" data-outfit="${outfit.id}">Edit Outfit</button>`;
   }
 
   /** Outfits picked so far in the "Add to Outfit" picker, and the item they're for. */
@@ -238,7 +266,7 @@
     } else if (action === "new-outfit") {
       startBuilder({ backHref: "#closet/outfits" });
     } else if (action === "edit-outfit" && outfit) {
-      startBuilder({ outfitId: outfit, backHref: "#closet/outfits" });
+      startBuilder({ outfitId: outfit, backHref: location.hash.startsWith("#closet/outfit/") ? location.hash : "#closet/outfits" });
     } else if (action === "cancel-build") {
       builder = null;
     } else if (action === "toggle-item" && item && builder) {
@@ -262,11 +290,12 @@
     }
   });
 
-  /** @param {string} [sub] "", a category id, "item/<id>", "build[/<category>]", or "outfits[/<item id>]" */
+  /** @param {string} [sub] "", a category id, "item/<id>", "outfit/<id>", "build[/<category>]", or "outfits[/<item id>]" */
   App.screens.closet = (sub) => {
     const [first, ...tail] = (sub ?? "").split("/");
     const rest = tail.join("/") || undefined;
     if (first === "item" && rest) return detail(rest);
+    if (first === "outfit" && rest) return outfitDetail(rest);
     if (first === "build") return buildScreen(categories.some((c) => c.id === rest) ? /** @type {string} */ (rest) : "all");
     if (first === "outfits") {
       const [mode, id] = (rest ?? "").split("/");
