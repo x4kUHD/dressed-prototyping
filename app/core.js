@@ -3,6 +3,8 @@
 // Every file hangs what it exports off this one global; load order is set in index.html.
 
 var App = {
+  /** @type {Set<string>} tabs that hide the tab bar and run edge to edge */
+  fullscreen: new Set(["camera"]),
   /** @type {Record<string, string>} Tabler SVG markup by name (see icons.js) */
   icons: {},
   /** @type {Record<string, (...args: any[]) => string>} */
