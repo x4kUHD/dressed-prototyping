@@ -15,6 +15,7 @@
     "camera-rotate": "arrow.triangle.2.circlepath.camera",
     photo: "photo",
     search: "magnifyingglass",
+    user: "person",
   };
 
   /** @param {string} name Tabler icon name */
