@@ -13,5 +13,5 @@ var App = {
   screens: {},
 };
 
-/** @param {string} name key in App.icons */
-App.icon = (name) => App.icons[name] ?? "";
+/** Tagged with data-icon so the copy-context export can map it to an SF Symbol. @param {string} name key in App.icons */
+App.icon = (name) => (App.icons[name] ?? "").replace("<svg", `<svg data-icon="${name}"`);
