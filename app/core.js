@@ -9,6 +9,8 @@ var App = {
   components: {},
   /** @type {Record<string, (sub?: string) => string>} */
   screens: {},
+  /** Re-render the current route; set by main.js */
+  render: () => {},
 };
 
 /** @param {string} name key in App.icons */

@@ -18,6 +18,7 @@
       </div>`;
   }
 
+  App.render = render;
   render();
   addEventListener("hashchange", render);
 })();
