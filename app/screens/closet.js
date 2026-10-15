@@ -19,6 +19,9 @@
     { id: "black-jeans", name: "Black Jeans", category: "pants", tags: ["Pants", "Denim", "Black", "Casual"] },
     { id: "grey-sweatpants", name: "Grey Sweatpants", category: "pants", tags: ["Pants", "Cotton", "Grey", "Lounge"] },
     { id: "brown-fitted-jeans", name: "Brown Fitted Jeans", category: "pants", tags: ["Pants", "Denim", "Brown", "Casual"] },
+    { id: "black-heels", name: "Black Heels", category: "shoes", tags: ["Shoes", "Heels", "Black", "Dressy"] },
+    { id: "brown-boots", name: "Brown Ankle Boots", category: "shoes", tags: ["Shoes", "Boots", "Brown", "Casual"] },
+    { id: "white-sneakers", name: "White Tennis Shoes", category: "shoes", tags: ["Shoes", "Sneakers", "White", "Casual"] },
   ];
 
   /** @type {{ id: string, name: string, itemIds: string[] }[]} */
@@ -65,7 +68,7 @@
           .map(
             (i) => `
           <a class="item-card" href="#closet/item/${i.id}">
-            <div class="item-photo" role="img" aria-label="${i.name}"></div>
+            <div class="item-photo" role="img" aria-label="${i.name}">${photoIcon(i.category)}</div>
             <div class="item-name">${i.name}</div>
             <div class="item-category">${categoryLabel(i.category)}</div>
           </a>`,
@@ -88,7 +91,7 @@
         <button class="icon-button" type="button" aria-label="Edit item">${App.icon("pencil")}</button>
         <button class="icon-button" type="button" aria-label="Delete item">${App.icon("trash")}</button>
       </div>
-      <div class="detail-photo" role="img" aria-label="${item.name}"></div>
+      <div class="detail-photo" role="img" aria-label="${item.name}">${photoIcon(item.category)}</div>
       <div class="detail-title">
         <h1>${item.name}</h1>
         <a class="icon-button" href="#closet/outfits/${item.id}" aria-label="View outfits using this item">${App.icon("hanger-2")}</a>
@@ -98,12 +101,22 @@
       <button class="btn btn-secondary" type="button" data-action="create-outfit" data-item="${item.id}">Create New Outfit</button>`;
   }
 
+  /** Tabler icon per closet category, shown on the placeholder photo until real photos exist. */
+  /** @type {Record<string, string>} */
+  const categoryIcons = { tops: "shirt", pants: "pants", skirts: "skirt", shoes: "shoe" };
+
+  /** @param {string} category */
+  const photoIcon = (category) => App.icon(categoryIcons[category] ?? "hanger-2");
+
   /** @param {string} t */
   const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
   /** @param {string[]} itemIds */
   const outfitPhoto = (itemIds) =>
-    `<div class="outfit-photo">${itemIds.slice(0, 4).map(() => '<div class="outfit-tile"></div>').join("")}</div>`;
+    `<div class="outfit-photo">${itemIds
+      .slice(0, 4)
+      .map((id) => `<div class="outfit-tile">${photoIcon(items.find((i) => i.id === id)?.category ?? "")}</div>`)
+      .join("")}</div>`;
 
   /** @param {string} [itemId] when set, only outfits that include this item */
   function savedOutfits(itemId) {
@@ -154,7 +167,7 @@
           .map(
             (i) => `
           <a class="item-card" href="#closet/item/${i.id}">
-            <div class="item-photo" role="img" aria-label="${i.name}"></div>
+            <div class="item-photo" role="img" aria-label="${i.name}">${photoIcon(i.category)}</div>
             <div class="item-name">${i.name}</div>
             <div class="item-category">${categoryLabel(i.category)}</div>
           </a>`,
@@ -239,7 +252,7 @@
             const on = b.selected.has(i.id);
             return `
           <button class="item-card pick-card" type="button" data-action="toggle-item" data-item="${i.id}" aria-pressed="${on}">
-            <div class="pick-photo"><div class="item-photo" role="img" aria-label="${i.name}"></div><span class="pick-check">${on ? App.icon("check") : ""}</span></div>
+            <div class="pick-photo"><div class="item-photo" role="img" aria-label="${i.name}">${photoIcon(i.category)}</div><span class="pick-check">${on ? App.icon("check") : ""}</span></div>
             <div class="item-name">${i.name}</div>
             <div class="item-category">${categoryLabel(i.category)}</div>
           </button>`;

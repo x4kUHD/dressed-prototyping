@@ -322,3 +322,14 @@
 .outfit-hero { margin-top: 4px; }
 .outfit-hero .outfit-photo { aspect-ratio: 1 / 0.85; }
 .detail-heading { margin-top: 16px; font-size: 28px; font-weight: 700; }
+
+/* Category icon centered on placeholder photos */
+.item-photo, .detail-photo, .outfit-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c8c8c;
+}
+.item-photo svg { width: 56px; height: 56px; }
+.detail-photo svg { width: 96px; height: 96px; }
+.outfit-tile svg { width: 36px; height: 36px; }
