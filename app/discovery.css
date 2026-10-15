@@ -1,0 +1,121 @@
+/* Discovery search: tone steps instead of lines or shadows, greyscale only. */
+
+.app-root { position: relative; }
+.app-screen:has(.disc) { display: flex; flex-direction: column; }
+.app-screen:has(.disc) .segmented { flex: none; }
+
+.disc { flex: 1; display: flex; flex-direction: column; padding-top: 12px; }
+
+/* Search field: leading icon, tag chips as tokens, then the text input */
+.dfield {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 12px; border-radius: 12px;
+  background: var(--fill); color: var(--secondary-label);
+  overflow-x: auto; scrollbar-width: none;
+  transition: background-color 150ms ease;
+}
+.dfield::-webkit-scrollbar { display: none; }
+.dfield:focus-within { background: rgba(0, 0, 0, 0.12); }
+.dfield > svg { width: 20px; height: 20px; flex: none; }
+.dfield input {
+  flex: 1 0 72px; min-width: 72px; border: 0; outline: 0; background: none;
+  font: inherit; font-size: 17px; color: var(--label); caret-color: var(--label);
+}
+.dfield input::-webkit-search-cancel-button { display: none; }
+
+.dchip {
+  position: relative; flex: none; height: 30px; padding: 0 12px 0 8px; border: 0; border-radius: 15px;
+  display: flex; align-items: center; gap: 4px;
+  background: var(--label); color: var(--bg); font: inherit; font-size: 13px; font-weight: 600;
+  animation: pop 180ms ease-out;
+}
+.dchip::after { content: ""; position: absolute; inset: -7px -2px; } /* 44pt hit area */
+.dchip svg { width: 14px; height: 14px; }
+.dchip:active { opacity: 0.7; }
+
+/* Suggestions only exist while the search field is focused; the feed hides behind them */
+.dsugg { display: none; }
+.disc:focus-within .dsugg { display: block; }
+.disc:focus-within .dgrid, .disc:focus-within .davatar { display: none; }
+
+/* Selected themes: chips live in the field while editing, in a row under it otherwise */
+.dthemes { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
+.dthemes::-webkit-scrollbar { display: none; }
+.dfield .dchip { display: none; }
+.disc:focus-within .dfield .dchip { display: flex; }
+.disc:focus-within .dthemes { display: none; }
+
+.dhint { margin: 20px 4px 4px; font-size: 13px; color: var(--secondary-label); }
+
+/* Suggestion rows */
+.dtags { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.dtag { display: flex; align-items: center; min-height: 52px; border-radius: 12px; background: var(--fill); transition: background-color 150ms ease; }
+.dtag:has(.dtag-main:active) { background: rgba(0, 0, 0, 0.14); }
+.dtag-main {
+  flex: 1; align-self: stretch; padding: 0 16px; border: 0; background: none;
+  text-align: left; font: inherit; font-size: 17px; color: var(--label);
+}
+.dtag-x {
+  flex: none; width: 48px; height: 48px; border: 0; background: none; color: var(--secondary-label);
+  display: flex; align-items: center; justify-content: center;
+}
+.dtag-x svg { width: 20px; height: 20px; }
+.dtag-x:active { opacity: 0.5; }
+
+.dgo { width: 100%; margin-top: 16px; border: 0; font-family: inherit; animation: rise 240ms ease-out; }
+
+/* Floating avatar, pinned to the bottom-right of the scroll area */
+.davatar {
+  position: sticky; bottom: 8px; align-self: flex-end; margin-top: auto; flex: none;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: #2b2b2b; color: #fff; text-decoration: none;
+  transition: transform 150ms ease;
+}
+.davatar svg { width: 28px; height: 28px; }
+.davatar:active { transform: scale(0.94); }
+
+/* Loading */
+.dload { flex: 1; min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.dload-icon { color: var(--label); transform-origin: 50% 12%; animation: sway 1.6s ease-in-out infinite; }
+.dload-icon svg { width: 72px; height: 72px; }
+.dbar { width: 160px; height: 8px; border-radius: 4px; overflow: hidden; background: var(--fill); }
+.dbar i { display: block; height: 100%; background: var(--label); transform-origin: left; animation: fill 1.5s ease-out forwards; }
+.dload p { font-size: 15px; color: var(--secondary-label); }
+
+/* Feed: plain boxes, two columns */
+.dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; padding-bottom: 8px; }
+.photo--card { width: 100%; aspect-ratio: 1 / 1; border-radius: 12px; animation: rise 360ms ease-out both; animation-delay: calc(var(--i) * 60ms); }
+
+/* On-screen keyboard stand-in (a real phone shows its own) */
+.kb {
+  display: none; position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+  padding: 8px 3px calc(var(--app-bottom) + 4px); background: #d1d1d1;
+}
+.disc:focus-within .kb { display: block; animation: rise 200ms ease-out; }
+.kb-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.kb-row--inset { padding: 0 18px; }
+.key {
+  flex: 1; height: 42px; padding: 0; border: 0; border-radius: 6px;
+  background: #fff; color: #000; font: inherit; font-size: 21px;
+  display: flex; align-items: center; justify-content: center;
+}
+.key svg { width: 22px; height: 22px; }
+.key:active { background: #bdbdbd; }
+.key--alt { background: #b4b4b4; }
+.key--wide { flex: 1.5; }
+.key--123 { flex: 1.4; font-size: 16px; }
+.key--space { flex: 5; font-size: 16px; }
+.key--go { flex: 2; background: #000; color: #fff; font-size: 16px; font-weight: 600; }
+.key--go:active { background: #333; }
+@media (max-width: 500px) { .kb { display: none !important; } }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes pop { from { opacity: 0; transform: scale(0.85); } }
+@keyframes sway { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes fill { from { transform: scaleX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dchip, .dgo, .photo--card, .kb, .dload-icon { animation: none !important; }
+  .dbar i { animation-duration: 0.01ms; }
+}

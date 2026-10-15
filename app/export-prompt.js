@@ -16,6 +16,8 @@
     photo: "photo",
     search: "magnifyingglass",
     user: "person",
+    backspace: "delete.left",
+    "arrow-big-up": "shift",
   };
 
   /** @param {string} name Tabler icon name */
@@ -134,6 +136,8 @@
     const cs = getComputedStyle(el);
     if (el.hasAttribute("hidden") || cs.display === "none" || cs.visibility === "hidden") return [];
     const tag = el.tagName.toLowerCase();
+    const system = el.getAttribute("data-system");
+    if (system) return [`System ${system} (provided by iOS; do not implement)`];
 
     if (tag === "svg") {
       const name = el.getAttribute("data-icon");
