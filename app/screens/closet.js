@@ -149,6 +149,10 @@
       }`;
   }
 
+  /** Id of the outfit whose delete confirmation is showing on its detail screen. */
+  let confirmDelete = "";
+  addEventListener("hashchange", () => (confirmDelete = ""));
+
   /** @param {string} id outfit id */
   function outfitDetail(id) {
     const outfit = outfits.find((o) => o.id === id);
@@ -157,7 +161,10 @@
     return `
       <header class="detail-top">
         <a class="back-link" href="#closet/outfits">${App.icon("chevron-left")}Saved Outfits</a>
-        <button class="icon-button" type="button" data-action="edit-outfit" data-outfit="${outfit.id}" aria-label="Edit ${esc(outfit.name)}">${App.icon("pencil")}</button>
+        <div class="header-actions">
+          <button class="icon-button" type="button" data-action="edit-outfit" data-outfit="${outfit.id}" aria-label="Edit ${esc(outfit.name)}">${App.icon("pencil")}</button>
+          <button class="icon-button" type="button" data-action="ask-delete" data-outfit="${outfit.id}" aria-label="Delete ${esc(outfit.name)}">${App.icon("trash")}</button>
+        </div>
       </header>
       <div class="outfit-hero">${outfitPhoto(outfit.itemIds)}</div>
       <h1 class="detail-heading">${esc(outfit.name)}</h1>
@@ -174,7 +181,17 @@
           )
           .join("")}
       </div>
-      <button class="btn btn-primary" type="button" data-action="edit-outfit" data-outfit="${outfit.id}">Edit Outfit</button>`;
+      ${
+        confirmDelete === outfit.id
+          ? `<div class="confirm-panel" role="alertdialog" aria-label="Delete outfit">
+              <p>Delete “${esc(outfit.name)}”? The items stay in your closet.</p>
+              <div class="confirm-actions">
+                <button class="btn btn-secondary" type="button" data-action="cancel-delete">Cancel</button>
+                <button class="btn btn-primary" type="button" data-action="delete-outfit" data-outfit="${outfit.id}">Delete</button>
+              </div>
+            </div>`
+          : `<button class="btn btn-primary" type="button" data-action="edit-outfit" data-outfit="${outfit.id}">Edit Outfit</button>`
+      }`;
   }
 
   /** Outfits picked so far in the "Add to Outfit" picker, and the item they're for. */
@@ -280,6 +297,18 @@
       startBuilder({ backHref: "#closet/outfits" });
     } else if (action === "edit-outfit" && outfit) {
       startBuilder({ outfitId: outfit, backHref: location.hash.startsWith("#closet/outfit/") ? location.hash : "#closet/outfits" });
+    } else if (action === "ask-delete" && outfit) {
+      confirmDelete = outfit;
+      App.render();
+      document.querySelector(".confirm-panel")?.scrollIntoView({ block: "nearest" });
+    } else if (action === "cancel-delete") {
+      confirmDelete = "";
+      App.render();
+    } else if (action === "delete-outfit" && outfit) {
+      const at = outfits.findIndex((o) => o.id === outfit);
+      if (at >= 0) outfits.splice(at, 1);
+      confirmDelete = "";
+      location.hash = "#closet/outfits";
     } else if (action === "cancel-build") {
       builder = null;
     } else if (action === "toggle-item" && item && builder) {

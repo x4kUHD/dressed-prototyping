@@ -333,3 +333,9 @@
 .item-photo svg { width: 56px; height: 56px; }
 .detail-photo svg { width: 96px; height: 96px; }
 .outfit-tile svg { width: 36px; height: 36px; }
+
+.header-actions { display: flex; }
+.confirm-panel { margin-top: 20px; padding: 16px; border: 1px solid var(--label); border-radius: 14px; }
+.confirm-panel p { font-size: 15px; }
+.confirm-actions { display: flex; gap: 12px; }
+.confirm-actions .btn { margin-top: 12px; }
