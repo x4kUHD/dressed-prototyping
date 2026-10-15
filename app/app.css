@@ -205,3 +205,60 @@
 .search-field { flex: 1; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--fill); color: var(--secondary-label); }
 .search-field svg { width: 20px; height: 20px; flex: none; }
 .search-field input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; color: var(--label); }
+
+/* ---------- Camera flow polish: motion, pressed and focus states ---------- */
+
+.btn, .match, .cam-btn, .shutter, .flow-back, .flow-text-btn {
+  transition: transform 150ms ease, background-color 150ms ease, opacity 150ms ease;
+}
+.btn:active, .match:active, .cam-btn:active { transform: scale(0.98); }
+.btn--secondary:active, .match:active { background: rgba(0, 0, 0, 0.14); }
+.shutter:active { transform: scale(0.92); }
+.flow-back:active, .flow-text-btn:active { opacity: 0.5; }
+:focus-visible { outline: 2px solid var(--label); outline-offset: 2px; }
+.viewfinder :focus-visible { outline-color: #fff; }
+
+.flow-title, .flow-back { text-wrap: balance; }
+.step { margin-top: 12px; font-size: 13px; color: var(--secondary-label); }
+.step strong { color: var(--label); font-weight: 600; }
+.match-list { margin-top: 8px; }
+
+.thumb-label {
+  position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px;
+  font-size: 11px; color: var(--secondary-label); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.thumbs { row-gap: 24px; }
+
+.cam-hint {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  max-width: calc(100% - 128px); padding: 6px 12px; border-radius: 14px;
+  background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 13px; text-align: center;
+}
+.cam-btn--corner { z-index: 1; }
+
+/* Temporary garment art fills its photo frame */
+.photo .garment { width: 100%; height: 100%; padding: 8%; }
+.photo--thumb .garment { padding: 2px; }
+
+/* Remove button on import thumbnails (replaces the old dot) */
+.thumb-x {
+  position: absolute; top: -6px; right: -6px; z-index: 1;
+  width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--label); color: var(--bg);
+}
+.thumb-x svg { width: 14px; height: 14px; }
+
+/* Capture view: grey all the way to the screen edges, status bar and home indicator included */
+.app-screen:has(.viewfinder) { background: var(--photo-dark); }
+.screen:has(.viewfinder) { background: var(--photo-dark); }
+.screen:has(.viewfinder) .statusbar { color: #fff; }
+.screen:has(.viewfinder) .home-indicator { background: #fff; }
+
+/* Buttons rendered as <button> (e.g. Search) match the link buttons: no native border */
+.btn { border: 0; font-family: inherit; }
+
+/* Sit the flow's action buttons closer to the bottom edge */
+.app-screen--flush { padding-bottom: calc(var(--app-bottom) * 0.4); }
+.flow-foot { padding-bottom: 4px; }

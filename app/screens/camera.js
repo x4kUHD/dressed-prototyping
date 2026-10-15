@@ -1,7 +1,8 @@
 // @ts-check
 (() => {
   /** Grey stand-in for a photo or product image. @param {string} [cls] */
-  const photo = (cls = "") => `<div class="photo ${cls}">${App.icon("photo")}</div>`;
+  const photo = (cls = "", kind = "") =>
+    `<div class="photo ${cls}">${kind ? App.components.garment(kind) : App.icon("photo")}</div>`;
 
   /** @param {string} href @param {string} label */
   const back = (href, label) =>
@@ -20,10 +21,11 @@
           <button class="flow-text-btn" type="button">Report inaccuracy</button>
         </header>
         <div class="flow-body">
-          ${photo("photo--crop")}
+          ${photo("photo--crop", "outfit")}
+          <p class="step">Piece ${n} of ${pieces.length}<span aria-hidden="true"> · </span><strong>${pieces[n - 1]}</strong></p>
           <div class="match-list">
             ${[1, 2, 3]
-              .map((i) => `<a class="match" href="#${next}">${photo("photo--thumb")}<span>${pieces[n - 1]} match ${i}</span></a>`)
+              .map((i) => `<a class="match" href="#${next}">${photo("photo--thumb", pieces[n - 1])}<span>${pieces[n - 1]} match ${i}</span></a>`)
               .join("")}
           </div>
         </div>
@@ -42,7 +44,7 @@
             </div>
             <div class="match-list">
               ${[1, 2, 3, 4]
-                .map((i) => `<a class="match" href="#${next}">${photo("photo--thumb")}<span>${pieces[n - 1]} result ${i}</span></a>`)
+                .map((i) => `<a class="match" href="#${next}">${photo("photo--thumb", pieces[n - 1])}<span>${pieces[n - 1]} result ${i}</span></a>`)
                 .join("")}
             </div>
           </div>
@@ -69,9 +71,9 @@
           <a class="flow-text-btn" href="#camera/edit">Edit</a>
         </header>
         <div class="flow-body">
-          ${photo("photo--outfit")}
+          ${photo("photo--outfit", "outfit")}
           <div class="thumbs">
-            ${items.map((t) => `<div class="thumb" title="${t}">${photo()}<i class="dot"></i></div>`).join("")}
+            ${items.map((t) => `<div class="thumb" title="${t}">${photo("", t)}<button class="thumb-x" type="button" aria-label="Remove ${t}">${App.icon("x")}</button><span class="thumb-label">${t}</span></div>`).join("")}
           </div>
         </div>
         <footer class="flow-foot">
@@ -87,7 +89,7 @@
     <div class="flow">
       <header class="flow-bar flow-bar--center"><span class="flow-title">Select area</span></header>
       <div class="flow-body flow-body--flush">
-        ${photo("photo--full")}
+        ${photo("photo--full", "outfit")}
         ${selected ? '<div class="selection"></div>' : ""}
       </div>
       <footer class="flow-foot">
@@ -100,7 +102,7 @@
       <header class="flow-bar">${back("camera/import", "Untitled")}</header>
       <div class="flow-body">
         <div class="photo photo--outfit">
-          ${App.icon("photo")}
+          ${App.components.garment("outfit")}
           <div class="handle-box"><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
@@ -113,6 +115,7 @@
   const capture = () => `
     <div class="viewfinder">
       <a class="cam-btn cam-btn--corner" href="#closet" aria-label="Exit">${App.icon("x")}</a>
+      <p class="cam-hint">Fit your whole outfit in the frame</p>
       <div class="cam-controls">
         <a class="cam-btn" href="#camera/import" aria-label="Upload">${App.icon("photo")}</a>
         <a class="shutter" href="#camera/pieces/1" aria-label="Take photo"></a>
