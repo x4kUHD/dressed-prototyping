@@ -98,6 +98,9 @@
       <button class="btn btn-secondary" type="button" data-action="create-outfit" data-item="${item.id}">Create New Outfit</button>`;
   }
 
+  /** @param {string} t */
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
   /** @param {string[]} itemIds */
   const outfitPhoto = (itemIds) =>
     `<div class="outfit-photo">${itemIds.slice(0, 4).map(() => '<div class="outfit-tile"></div>').join("")}</div>`;
@@ -111,6 +114,7 @@
       <header class="detail-top"><a class="back-link" href="${back}">${App.icon("chevron-left")}${item ? item.name : "My Closet"}</a></header>
       <h1 class="large-title">${item ? `Outfits with ${item.name}` : "Saved Outfits"}</h1>
       <p class="closet-count">${shown.length} ${shown.length === 1 ? "outfit" : "outfits"}</p>
+      ${item ? "" : '<button class="btn btn-primary btn-new" type="button" data-action="new-outfit">Create New Outfit</button>'}
       ${
         shown.length
           ? `<div class="item-grid">${shown
@@ -118,8 +122,13 @@
                 (o) => `
           <div class="item-card">
             ${outfitPhoto(o.itemIds)}
-            <div class="item-name">${o.name}</div>
-            <div class="item-category">${o.itemIds.length} items</div>
+            <div class="outfit-meta">
+              <div class="outfit-meta-text">
+                <div class="item-name">${esc(o.name)}</div>
+                <div class="item-category">${o.itemIds.length} items</div>
+              </div>
+              <button class="icon-button edit-button" type="button" data-action="edit-outfit" data-outfit="${o.id}" aria-label="Edit ${esc(o.name)}">${App.icon("pencil")}</button>
+            </div>
           </div>`,
               )
               .join("")}</div>`
@@ -166,12 +175,82 @@
       </div>`;
   }
 
+  /**
+   * The outfit being created or edited on the build screen.
+   * @type {{ outfitId?: string, name: string, defaultName: string, selected: Set<string>, backHref: string } | null}
+   */
+  let builder = null;
+
+  /** @param {{ outfitId?: string, itemId?: string, backHref: string }} opts */
+  function startBuilder({ outfitId, itemId, backHref }) {
+    const outfit = outfits.find((o) => o.id === outfitId);
+    builder = outfit
+      ? { outfitId, name: outfit.name, defaultName: outfit.name, selected: new Set(outfit.itemIds), backHref }
+      : { name: "", defaultName: `Outfit ${outfits.length + 1}`, selected: new Set(itemId ? [itemId] : []), backHref };
+    location.hash = "#closet/build";
+  }
+
+  /** Closet grid with check circles: pick the items for a new or existing outfit, and name it. @param {string} category */
+  function buildScreen(category) {
+    if (!builder) builder = { name: "", defaultName: `Outfit ${outfits.length + 1}`, selected: new Set(), backHref: "#closet/outfits" };
+    const b = builder;
+    const editing = Boolean(b.outfitId);
+    const shown = category === "all" ? items : items.filter((i) => i.category === category);
+    const n = b.selected.size;
+    return `
+      <header class="detail-top"><a class="back-link" href="${b.backHref}" data-action="cancel-build">${App.icon("chevron-left")}Cancel</a></header>
+      <h1 class="large-title">${editing ? "Edit Outfit" : "New Outfit"}</h1>
+      <input class="name-input" type="text" data-name-input maxlength="40" value="${esc(b.name)}" placeholder="${esc(b.defaultName)}" aria-label="Outfit name">
+      <p class="closet-count">Select the items in this outfit</p>
+      <div class="chips">
+        ${categories.map((c) => App.components.chip(c.label, c.id === "all" ? "#closet/build" : `#closet/build/${c.id}`, c.id === category)).join("")}
+      </div>
+      <div class="item-grid">
+        ${shown
+          .map((i) => {
+            const on = b.selected.has(i.id);
+            return `
+          <button class="item-card pick-card" type="button" data-action="toggle-item" data-item="${i.id}" aria-pressed="${on}">
+            <div class="pick-photo"><div class="item-photo" role="img" aria-label="${i.name}"></div><span class="pick-check">${on ? App.icon("check") : ""}</span></div>
+            <div class="item-name">${i.name}</div>
+            <div class="item-category">${categoryLabel(i.category)}</div>
+          </button>`;
+          })
+          .join("")}
+      </div>
+      <div class="sticky-bar">
+        <button class="btn btn-primary" type="button" data-action="save-build" ${n ? "" : "disabled"}>
+          ${n ? `${editing ? "Save Changes" : "Create Outfit"} (${n})` : "Select Items"}
+        </button>
+      </div>`;
+  }
+
+  document.addEventListener("input", (e) => {
+    if (builder && e.target instanceof HTMLInputElement && e.target.matches("[data-name-input]")) builder.name = e.target.value;
+  });
+
   document.addEventListener("click", (e) => {
     const el = e.target instanceof Element ? e.target.closest("[data-action]") : null;
     if (!(el instanceof HTMLElement)) return;
     const { action, item, outfit } = el.dataset;
     if (action === "create-outfit" && item) {
-      outfits.unshift({ id: `outfit-${Date.now()}`, name: `Outfit ${outfits.length + 1}`, itemIds: [item] });
+      startBuilder({ itemId: item, backHref: `#closet/item/${item}` });
+    } else if (action === "new-outfit") {
+      startBuilder({ backHref: "#closet/outfits" });
+    } else if (action === "edit-outfit" && outfit) {
+      startBuilder({ outfitId: outfit, backHref: "#closet/outfits" });
+    } else if (action === "cancel-build") {
+      builder = null;
+    } else if (action === "toggle-item" && item && builder) {
+      if (!builder.selected.delete(item)) builder.selected.add(item);
+      App.render();
+    } else if (action === "save-build" && builder && builder.selected.size) {
+      const name = builder.name.trim() || builder.defaultName;
+      const itemIds = [...builder.selected];
+      const existing = outfits.find((o) => o.id === builder?.outfitId);
+      if (existing) Object.assign(existing, { name, itemIds });
+      else outfits.unshift({ id: `outfit-${Date.now()}`, name, itemIds });
+      builder = null;
       location.hash = "#closet/outfits";
     } else if (action === "toggle-pick" && outfit) {
       if (!picked.delete(outfit)) picked.add(outfit);
@@ -183,11 +262,12 @@
     }
   });
 
-  /** @param {string} [sub] "", a category id, "item/<id>", or "outfits[/<item id>]" */
+  /** @param {string} [sub] "", a category id, "item/<id>", "build[/<category>]", or "outfits[/<item id>]" */
   App.screens.closet = (sub) => {
     const [first, ...tail] = (sub ?? "").split("/");
     const rest = tail.join("/") || undefined;
     if (first === "item" && rest) return detail(rest);
+    if (first === "build") return buildScreen(categories.some((c) => c.id === rest) ? /** @type {string} */ (rest) : "all");
     if (first === "outfits") {
       const [mode, id] = (rest ?? "").split("/");
       return mode === "pick" ? outfitPicker(id) : savedOutfits(rest);
