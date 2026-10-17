@@ -398,6 +398,27 @@
   min-height: 44px;
 }
 
+.topbar-square-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d0d0d0;
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.topbar-square-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+}
+
 .avatar-capsule {
   flex: 1;
   max-width: 200px;
@@ -405,11 +426,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.06);
+  background: #dcdcdc;
   border-radius: 17px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--label);
+  color: #333333;
   letter-spacing: -0.2px;
 }
 
@@ -437,6 +458,22 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 6px;
+}
+
+.sub-nav-pill {
+  min-width: 76px;
+  height: 32px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #d0d0d0;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sub-nav-btn {
@@ -488,12 +525,18 @@
   max-height: 220px;
   width: auto;
   object-fit: contain;
+  transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
 .avatar-img-full {
   max-height: 270px;
   width: auto;
   object-fit: contain;
+  transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.avatar-screen:has(.avatar-bottom-sheet.is-expanded) .avatar-img-bust {
+  max-height: 140px;
 }
 
 .avatar-selection-box {
@@ -581,82 +624,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--separator);
+  background: #d0d0d0;
+  border: none;
   border-radius: 22px;
-  color: var(--label);
+  color: #ffffff;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
 .tool-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  stroke: #ffffff;
 }
 
 .tool-pill {
-  min-height: 44px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0 14px;
-  background: rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--separator);
-  border-radius: 22px;
-  font-size: 13px;
+  padding: 0 18px;
+  background: #d0d0d0;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--label);
+  color: #ffffff;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-}
-
-.tool-pill svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* Layout Switcher (*2 options note) */
-.layout-toggle-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  padding: 4px 16px;
-  background: rgba(0, 0, 0, 0.03);
-  border-top: 0.5px solid var(--separator);
-}
-
-.layout-toggle-label {
-  font-size: 11px;
-  color: var(--secondary-label);
-  font-weight: 600;
-}
-
-.layout-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid transparent;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--secondary-label);
-  cursor: pointer;
-}
-
-.layout-toggle-btn.active {
-  background: #ffffff;
-  border-color: var(--separator);
-  color: var(--label);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.layout-toggle-btn svg {
-  width: 14px;
-  height: 14px;
 }
 
 /* ---------- Bottom Sheet & Pickers ---------- */
@@ -665,16 +660,39 @@
   background: #ffffff;
   border-top: 1px solid var(--separator);
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
-  padding: 6px 14px 14px;
+  padding: 0 14px 14px;
   z-index: 6;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-handle-zone {
+  width: 100%;
+  padding: 10px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheet-handle-zone:active {
+  cursor: grabbing;
 }
 
 .sheet-drag-handle {
   width: 36px;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-  margin: 2px auto 8px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 2.5px;
+  transition: background 0.15s ease, width 0.15s ease;
+}
+
+.sheet-handle-zone:hover .sheet-drag-handle,
+.sheet-handle-zone:active .sheet-drag-handle {
+  background: rgba(0, 0, 0, 0.5);
+  width: 44px;
 }
 
 .sheet-tabs {
@@ -712,15 +730,23 @@
   gap: 10px;
   overflow-x: auto;
   padding: 8px 2px;
+  transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
 .picker-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  max-height: 140px;
+  max-height: 160px;
   overflow-y: auto;
   padding: 8px 2px;
+  -webkit-overflow-scrolling: touch;
+  transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* Expanded state: dragged or tapped to show more options */
+.avatar-bottom-sheet.is-expanded .picker-grid {
+  max-height: var(--sheet-custom-height, 350px);
 }
 
 .picker-card {
@@ -749,7 +775,9 @@
 
 .picker-card-grid {
   flex: none;
-  width: auto;
+  width: 100%;
+  height: 76px;
+  padding: 4px;
 }
 
 .picker-card-swatch {
@@ -800,6 +828,11 @@
   flex: 0 0 88px;
 }
 
+.picker-card-grid.saved-fit-card {
+  flex: none;
+  width: 100%;
+}
+
 .fit-card-preview {
   width: 44px;
   height: 44px;
@@ -810,9 +843,274 @@
   justify-content: center;
 }
 
+.picker-card-grid .fit-card-preview {
+  width: 32px;
+  height: 32px;
+}
+
+.picker-card-grid .fit-card-preview svg {
+  width: 18px;
+  height: 18px;
+}
+
+.picker-card-grid.saved-fit-add-card .fit-add-plus svg {
+  width: 20px;
+  height: 20px;
+}
+
+.picker-card-grid.saved-fit-add-card .fit-add-text {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
 .fit-card-preview svg {
   width: 26px;
   height: 26px;
+}
+
+/* ---------- Avatar Outfit Screen (Mockup Wireframe) ---------- */
+
+/* Category Row directly on canvas */
+.avatar-category-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 10px 16px 8px;
+  background: #ffffff;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  user-select: none;
+  touch-action: pan-x;
+  z-index: 5;
+}
+
+.avatar-category-row::-webkit-scrollbar {
+  display: none;
+}
+
+.avatar-cat-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.avatar-cat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555555;
+  padding: 4px 10px;
+  border-radius: 14px;
+  transition: all 0.15s ease;
+}
+
+.avatar-cat-btn.active .avatar-cat-label {
+  background: #d0d0d0;
+  color: #111111;
+  font-weight: 600;
+}
+
+.avatar-cat-btn.active::after {
+  content: "";
+  display: block;
+  width: 70%;
+  height: 2px;
+  background: #333333;
+  margin-top: 3px;
+  border-radius: 1px;
+}
+
+/* 3D Overlapping Cover Flow Carousel */
+.coverflow-viewport {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+  user-select: none;
+  /* none = let JS handle all pointer/touch; prevents iOS from swallowing horizontal swipes */
+  touch-action: none;
+}
+
+.coverflow-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cf-card {
+  position: absolute;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  /* fast snappy ease-out; suppressed during drag via inline style.transition="none" */
+  transition: transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.22s ease,
+              background-color 0.22s ease,
+              box-shadow 0.22s ease,
+              width 0.22s ease,
+              height 0.22s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+/* Card content: icon + label */
+.cf-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.cf-card.cf-center .cf-card-icon {
+  opacity: 1;
+}
+
+.cf-card-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke: #ffffff;
+}
+
+.cf-card.cf-left-2 .cf-card-icon svg,
+.cf-card.cf-right-2 .cf-card-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cf-card.cf-left-1 .cf-card-icon svg,
+.cf-card.cf-right-1 .cf-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cf-card-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  padding: 0 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+  opacity: 0.9;
+}
+
+.cf-card.cf-left-2 .cf-card-label,
+.cf-card.cf-right-2 .cf-card-label {
+  display: none;
+}
+
+.cf-card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Stacking positions: square cards, lightest in front, darker cards behind */
+
+/* Center: lightest (#e4e4e4), in front and middle, selectable */
+.cf-card.cf-center {
+  width: 140px;
+  height: 140px;
+  background: #e4e4e4;
+  z-index: 10;
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* 1st step adjacent: darker medium grey (#b0b0b0), behind center card */
+.cf-card.cf-left-1 {
+  width: 116px;
+  height: 116px;
+  background: #b0b0b0;
+  z-index: 5;
+  transform: translate3d(-75px, 0, 0);
+  opacity: 0.96;
+  cursor: pointer;
+}
+
+.cf-card.cf-right-1 {
+  width: 116px;
+  height: 116px;
+  background: #b0b0b0;
+  z-index: 5;
+  transform: translate3d(75px, 0, 0);
+  opacity: 0.96;
+  cursor: pointer;
+}
+
+/* 2nd step adjacent: darkest grey (#828282), behind the 1st step */
+.cf-card.cf-left-2 {
+  width: 96px;
+  height: 96px;
+  background: #828282;
+  z-index: 2;
+  transform: translate3d(-132px, 0, 0);
+  opacity: 0.88;
+  cursor: pointer;
+}
+
+.cf-card.cf-right-2 {
+  width: 96px;
+  height: 96px;
+  background: #828282;
+  z-index: 2;
+  transform: translate3d(132px, 0, 0);
+  opacity: 0.88;
+  cursor: pointer;
+}
+
+/* Hidden off-screen cards */
+.cf-card.cf-far-left {
+  width: 80px;
+  height: 80px;
+  background: #606060;
+  z-index: 1;
+  transform: translate3d(-180px, 0, 0) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cf-card.cf-far-right {
+  width: 80px;
+  height: 80px;
+  background: #606060;
+  z-index: 1;
+  transform: translate3d(180px, 0, 0) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cf-card.cf-hidden {
+  display: none;
 }
 
 /* ---------- Screen 3: Layering Sidebar ---------- */

@@ -1,46 +1,134 @@
 // @ts-check
 (() => {
-  /** @type {"carousel" | "grid"} */
-  let custLayout = "carousel"; // Screen 1 (carousel) vs Screen 5 (grid)
   let custCategory = "bangs";
   let clothCategory = "tops";
   let zoomLevel = 1;
   let selectedCustIndex = 0;
   let selectedClothIndex = 0;
+  let isSheetExpanded = false;
+  /** @type {number | null} */
+  let sheetCustomHeight = null;
 
   const custCategories = ["bangs", "hair", "face", "body"];
-  const clothCategories = ["skirts", "shoes", "tops", "jackets", "pants", "saved fits"];
-
-  const sampleCustItems = [
-    { id: 1, label: "Curtain" },
-    { id: 2, label: "Full" },
-    { id: 3, label: "Wispy" },
-    { id: 4, label: "Side" },
-    { id: 5, label: "Micro" },
-    { id: 6, label: "Blunt" },
-    { id: 7, label: "Feathered" },
-    { id: 8, label: "Layered" },
+  const clothCategories = [
+    { id: "skirts", label: "skirts" },
+    { id: "shoes", label: "shoes" },
+    { id: "tops", label: "tops" },
+    { id: "jackets", label: "jackets" },
+    { id: "pant", label: "pant" },
+    { id: "saved fits", label: "saved fits" },
   ];
+
+  /** @type {Record<string, { id: number, label: string }[]>} */
+  const custItemsByCategory = {
+    bangs: [
+      { id: 1, label: "Curtain" },
+      { id: 2, label: "Full" },
+      { id: 3, label: "Wispy" },
+      { id: 4, label: "Side" },
+      { id: 5, label: "Micro" },
+      { id: 6, label: "Blunt" },
+      { id: 7, label: "Feathered" },
+      { id: 8, label: "Layered" },
+      { id: 9, label: "Choppy" },
+      { id: 10, label: "Shag" },
+      { id: 11, label: "Asym" },
+      { id: 12, label: "Split" },
+    ],
+    hair: [
+      { id: 101, label: "Bob" },
+      { id: 102, label: "Pixie" },
+      { id: 103, label: "Waves" },
+      { id: 104, label: "Straight" },
+      { id: 105, label: "Curls" },
+      { id: 106, label: "Ponytail" },
+      { id: 107, label: "Bun" },
+      { id: 108, label: "Braids" },
+      { id: 109, label: "Lob" },
+      { id: 110, label: "Buzz" },
+      { id: 111, label: "Afro" },
+      { id: 112, label: "Dreads" },
+    ],
+    face: [
+      { id: 201, label: "Oval" },
+      { id: 202, label: "Round" },
+      { id: 203, label: "Square" },
+      { id: 204, label: "Heart" },
+      { id: 205, label: "Diamond" },
+      { id: 206, label: "Soft" },
+      { id: 207, label: "Sharp" },
+      { id: 208, label: "Defined" },
+      { id: 209, label: "Classic" },
+      { id: 210, label: "Wide" },
+      { id: 211, label: "Angular" },
+      { id: 212, label: "Petite" },
+    ],
+    body: [
+      { id: 301, label: "Petite" },
+      { id: 302, label: "Slim" },
+      { id: 303, label: "Athletic" },
+      { id: 304, label: "Curved" },
+      { id: 305, label: "Tall" },
+      { id: 306, label: "Standard" },
+      { id: 307, label: "Plus" },
+      { id: 308, label: "Broad" },
+      { id: 309, label: "Lean" },
+      { id: 310, label: "Muscular" },
+      { id: 311, label: "Relaxed" },
+      { id: 312, label: "Silhouette" },
+    ],
+  };
 
   const sampleClothes = [
     { id: 1, name: "Ribbed Crop", cat: "tops" },
     { id: 2, name: "Oversized Tee", cat: "tops" },
     { id: 3, name: "Knit Sweater", cat: "tops" },
     { id: 4, name: "Tank Top", cat: "tops" },
-    { id: 5, name: "Pleated Mini", cat: "skirts" },
-    { id: 6, name: "Midi Wrap", cat: "skirts" },
-    { id: 7, name: "Cargo Pants", cat: "pants" },
-    { id: 8, name: "Wide Trousers", cat: "pants" },
-    { id: 9, name: "Puffer Jacket", cat: "jackets" },
-    { id: 10, name: "Leather Blazer", cat: "jackets" },
-    { id: 11, name: "Chunky Loafers", cat: "shoes" },
-    { id: 12, name: "Retro Sneakers", cat: "shoes" },
+    { id: 5, name: "Baby Tee", cat: "tops" },
+    { id: 6, name: "Button Shirt", cat: "tops" },
+    { id: 7, name: "Halter Top", cat: "tops" },
+    { id: 8, name: "Cardigan", cat: "tops" },
+    { id: 9, name: "Pleated Mini", cat: "skirts" },
+    { id: 10, name: "Midi Wrap", cat: "skirts" },
+    { id: 11, name: "Silk Maxi", cat: "skirts" },
+    { id: 12, name: "Denim A-Line", cat: "skirts" },
+    { id: 13, name: "Cargo Skirt", cat: "skirts" },
+    { id: 14, name: "Tennis Skirt", cat: "skirts" },
+    { id: 15, name: "Slit Midi", cat: "skirts" },
+    { id: 16, name: "Tiered Maxi", cat: "skirts" },
+    { id: 17, name: "Cargo Pants", cat: "pants" },
+    { id: 18, name: "Wide Trousers", cat: "pants" },
+    { id: 19, name: "Flare Denim", cat: "pants" },
+    { id: 20, name: "Straight Leg", cat: "pants" },
+    { id: 21, name: "Tailored Pant", cat: "pants" },
+    { id: 22, name: "Track Pants", cat: "pants" },
+    { id: 23, name: "Pleated Chino", cat: "pants" },
+    { id: 24, name: "Low Rise", cat: "pants" },
+    { id: 25, name: "Puffer Jacket", cat: "jackets" },
+    { id: 26, name: "Leather Blazer", cat: "jackets" },
+    { id: 27, name: "Denim Jacket", cat: "jackets" },
+    { id: 28, name: "Trench Coat", cat: "jackets" },
+    { id: 29, name: "Bomber Jacket", cat: "jackets" },
+    { id: 30, name: "Wool Coat", cat: "jackets" },
+    { id: 31, name: "Track Jacket", cat: "jackets" },
+    { id: 32, name: "Shearling", cat: "jackets" },
+    { id: 33, name: "Chunky Loafers", cat: "shoes" },
+    { id: 34, name: "Retro Sneakers", cat: "shoes" },
+    { id: 35, name: "Platform Boots", cat: "shoes" },
+    { id: 36, name: "Kitten Heels", cat: "shoes" },
+    { id: 37, name: "High Tops", cat: "shoes" },
+    { id: 38, name: "Ballet Flats", cat: "shoes" },
+    { id: 39, name: "Combat Boots", cat: "shoes" },
+    { id: 40, name: "Strappy Heels", cat: "shoes" },
   ];
 
   const savedFits = [
     { id: 1, name: "Everyday Minimal", items: "Tee + Trousers" },
     { id: 2, name: "Weekend Cozy", items: "Knit + Pleated Mini" },
     { id: 3, name: "City Night", items: "Blazer + Wide Pants" },
+    { id: 4, name: "Studio Casual", items: "Crop + Cargo" },
+    { id: 5, name: "Monochrome", items: "Puffer + Low Rise" },
+    { id: 6, name: "Relaxed Chic", items: "Silk Maxi + Cardigan" },
   ];
 
   const wornLayers = [
@@ -133,22 +221,21 @@
     return `
       <div class="avatar-topbar">
         <div class="avatar-topbar-row">
-          <button class="icon-btn" type="button" aria-label="Menu" onclick="alert('Menu options')">
+          <button class="topbar-square-btn" type="button" aria-label="Menu" onclick="alert('Menu options')">
             ${App.icon("menu-2")}
           </button>
           <div class="avatar-capsule">
             <span>user avatar</span>
           </div>
-          <a class="icon-btn" href="#closet/fullscreen" aria-label="Full screen view" title="Full screen">
-            ${App.icon("user-scan")}
+          <a class="topbar-square-btn" href="#closet/fullscreen" aria-label="Full screen view" title="Full screen">
+            ${App.icon("corners")}
           </a>
         </div>
         <div class="avatar-subbar-row">
-          <a class="sub-nav-btn" href="${leftHref}">
-            ${App.icon("chevron-left")}
+          <a class="sub-nav-pill" href="${leftHref}">
             <span>${leftText}</span>
           </a>
-          <a class="sub-nav-btn sub-nav-btn-action" href="${rightHref}">
+          <a class="sub-nav-pill" href="${rightHref}">
             <span>${rightText}</span>
           </a>
         </div>
@@ -184,16 +271,17 @@
       </div>
       <div class="canvas-tools-right">
         <button class="tool-pill" type="button" title="Filters">
-          ${App.icon("adjustments-horizontal")}
           <span>filters</span>
         </button>
       </div>`;
   }
 
   /**
-   * Screen 1 & 5: Avatar Customization
+   * Screen 5: Avatar Customization with Vertical Grid
    */
   function renderAvatarCustomize() {
+    const items = custItemsByCategory[custCategory] || custItemsByCategory.bangs;
+
     return `
       <div class="avatar-screen avatar-cust-screen">
         ${renderAvatarTopNav("closet", "#closet", "next", "#closet/cloth")}
@@ -207,22 +295,11 @@
           ${renderCanvasTools()}
         </div>
 
-        <!-- Layout Selector Note (*2 options in mockup) -->
-        <div class="layout-toggle-bar">
-          <span class="layout-toggle-label">Layout:</span>
-          <button class="layout-toggle-btn ${custLayout === "carousel" ? "active" : ""}" type="button" data-layout="carousel">
-            ${App.icon("layout-list")}
-            <span>Horizontal</span>
-          </button>
-          <button class="layout-toggle-btn ${custLayout === "grid" ? "active" : ""}" type="button" data-layout="grid">
-            ${App.icon("layout-grid")}
-            <span>Grid</span>
-          </button>
-        </div>
-
-        <!-- Bottom Sheet Picker -->
-        <div class="avatar-bottom-sheet">
-          <div class="sheet-drag-handle"></div>
+        <!-- Bottom Sheet Picker with Vertical Grid -->
+        <div class="avatar-bottom-sheet ${isSheetExpanded ? "is-expanded" : ""}" ${sheetCustomHeight ? `style="--sheet-custom-height: ${sheetCustomHeight}px;"` : ""}>
+          <div class="sheet-handle-zone" title="Drag or tap to expand options">
+            <div class="sheet-drag-handle"></div>
+          </div>
           <div class="sheet-tabs">
             ${custCategories.map((c) => `
               <button class="sheet-tab ${c === custCategory ? "active" : ""}" type="button" data-cust-cat="${c}">
@@ -231,91 +308,78 @@
             `).join("")}
           </div>
 
-          ${custLayout === "carousel" ? `
-            <!-- Horizontal Carousel (Screen 1) -->
-            <div class="picker-carousel">
-              ${sampleCustItems.map((item, idx) => `
-                <div class="picker-card ${idx === selectedCustIndex ? "selected" : ""}" data-cust-idx="${idx}">
-                  <div class="picker-card-swatch"></div>
-                  <span class="picker-card-label">${item.label}</span>
-                </div>
-              `).join("")}
-            </div>
-          ` : `
-            <!-- Vertical Grid (Screen 5) -->
-            <div class="picker-grid">
-              ${sampleCustItems.map((item, idx) => `
-                <div class="picker-card picker-card-grid ${idx === selectedCustIndex ? "selected" : ""}" data-cust-idx="${idx}">
-                  <div class="picker-card-swatch"></div>
-                  <span class="picker-card-label">${item.label}</span>
-                </div>
-              `).join("")}
-            </div>
-          `}
+          <!-- Vertical Grid -->
+          <div class="picker-grid">
+            ${items.map((item, idx) => `
+              <div class="picker-card picker-card-grid ${idx === selectedCustIndex ? "selected" : ""}" data-cust-idx="${idx}">
+                <div class="picker-card-swatch"></div>
+                <span class="picker-card-label">${item.label}</span>
+              </div>
+            `).join("")}
+          </div>
         </div>
       </div>`;
   }
 
   /**
-   * Screen 2: Avatar Clothes
+   * Screen 2: Avatar Clothes (Avatar Clothes Try-On)
    */
   function renderAvatarClothes() {
     const isSavedFits = clothCategory === "saved fits";
-    const filteredClothes = sampleClothes.filter((c) => clothCategory === "all" || c.cat === clothCategory);
+    const filteredClothes = isSavedFits
+      ? savedFits
+      : sampleClothes.filter((c) => clothCategory === "all" || c.cat === clothCategory || (clothCategory === "pant" && (c.cat === "pant" || c.cat === "pants")));
+
+    if (selectedClothIndex >= filteredClothes.length) selectedClothIndex = 0;
 
     return `
       <div class="avatar-screen avatar-cloth-screen">
-        ${renderAvatarTopNav("back", "#closet/avatar", "next", "#closet/fullbody")}
+        ${renderAvatarTopNav("back", "#closet/avatar", "save", "#closet/fullbody")}
 
-        <!-- Full Body Canvas with Selection Outline -->
+        <!-- Full Body Canvas without selection box -->
         <div class="avatar-canvas avatar-canvas-full">
-          <div class="avatar-selection-box" style="transform: scale(${zoomLevel});">
+          <div class="avatar-stage avatar-stage-full" style="transform: scale(${zoomLevel});">
             <img src="app/assets/avatar-full.png" alt="Avatar full body" class="avatar-img-full">
           </div>
           ${renderZoomSlider()}
           ${renderCanvasTools()}
         </div>
 
-        <!-- Bottom Sheet Picker for Clothes -->
-        <div class="avatar-bottom-sheet">
-          <div class="sheet-drag-handle"></div>
-          <div class="sheet-tabs sheet-tabs-scroll">
-            ${clothCategories.map((c) => `
-              <button class="sheet-tab ${c === clothCategory ? "active" : ""}" type="button" data-cloth-cat="${c}">
-                ${c}
-              </button>
-            `).join("")}
-          </div>
+        <!-- Category Selector Directly on Canvas matching wireframe -->
+        <div class="avatar-category-row">
+          ${clothCategories.map((c) => `
+            <button class="avatar-cat-btn ${c.id === clothCategory ? "active" : ""}" type="button" data-cloth-cat="${c.id}">
+              <span class="avatar-cat-label">${c.label}</span>
+            </button>
+          `).join("")}
+        </div>
 
-          ${isSavedFits ? `
-            <!-- Screen 6: Saved Fits Carousel -->
-            <div class="picker-carousel">
-              <a class="picker-card saved-fit-add-card" href="#closet" title="Go to digital closet">
-                <div class="fit-add-plus">${App.icon("plus")}</div>
-                <span class="fit-add-text">go to digital closet</span>
-              </a>
-              ${savedFits.map((fit) => `
-                <div class="picker-card saved-fit-card">
-                  <div class="fit-card-preview">
-                    ${App.icon("hanger-2")}
-                  </div>
-                  <span class="picker-card-label">${fit.name}</span>
-                </div>
-              `).join("")}
-            </div>
-          ` : `
-            <!-- Screen 2: Clothing items horizontal carousel -->
-            <div class="picker-carousel">
-              ${filteredClothes.map((item, idx) => `
-                <div class="picker-card ${idx === selectedClothIndex ? "selected" : ""}" data-cloth-idx="${idx}">
-                  <div class="picker-card-swatch clothing-swatch">
-                    ${App.icon("hanger-2")}
-                  </div>
-                  <span class="picker-card-label">${item.name}</span>
-                </div>
-              `).join("")}
-            </div>
-          `}
+        <!-- 3D Overlapping Cover Flow Carousel matching mockup -->
+        <div class="coverflow-viewport" id="coverflowViewport">
+          <div class="coverflow-stage">
+            ${filteredClothes.map((item, idx) => {
+              const total = filteredClothes.length;
+              // Compute modular difference so it loops around cleanly
+              let diff = (idx - selectedClothIndex) % total;
+              if (diff > total / 2) diff -= total;
+              else if (diff < -total / 2) diff += total;
+
+              let posClass = "cf-hidden";
+              if (diff === 0) posClass = "cf-center";
+              else if (diff === -1) posClass = "cf-left-1";
+              else if (diff === 1) posClass = "cf-right-1";
+              else if (diff === -2) posClass = "cf-left-2";
+              else if (diff === 2) posClass = "cf-right-2";
+              else if (diff < -2) posClass = "cf-far-left";
+              else if (diff > 2) posClass = "cf-far-right";
+
+              return `
+                <div class="cf-card ${posClass}" data-cloth-idx="${idx}" title="${item.name}">
+                  <div class="cf-card-icon">${App.icon("hanger-2")}</div>
+                  <span class="cf-card-label">${item.name || item.label || ""}</span>
+                </div>`;
+            }).join("")}
+          </div>
         </div>
       </div>`;
   }
@@ -433,16 +497,6 @@
       return;
     }
 
-    // Customization layout toggle (carousel vs grid)
-    const layoutBtn = target.closest("[data-layout]");
-    if (layoutBtn) {
-      const mode = layoutBtn.getAttribute("data-layout");
-      if (mode === "carousel" || mode === "grid") {
-        custLayout = mode;
-        if (App.render) App.render();
-      }
-      return;
-    }
 
     // Customization category tabs
     const custTab = target.closest("[data-cust-cat]");
@@ -456,6 +510,7 @@
     const clothTab = target.closest("[data-cloth-cat]");
     if (clothTab) {
       clothCategory = clothTab.getAttribute("data-cloth-cat") || "tops";
+      selectedClothIndex = 0;
       if (App.render) App.render();
       return;
     }
@@ -468,14 +523,331 @@
       return;
     }
 
-    // Clothing card selection
+    // Clothing card selection — handled entirely by pointer events for smooth animation;
+    // only fall through here for non-coverflow cloth cards (future use)
     const clothCard = target.closest("[data-cloth-idx]");
-    if (clothCard) {
+    if (clothCard && !clothCard.closest(".coverflow-viewport")) {
       selectedClothIndex = parseInt(clothCard.getAttribute("data-cloth-idx") || "0", 10);
       if (App.render) App.render();
       return;
     }
   });
+
+  /**
+   * Helper to get active clothes list for current category
+   */
+  function getActiveClothItems() {
+    return clothCategory === "saved fits"
+      ? savedFits
+      : sampleClothes.filter((c) => clothCategory === "all" || c.cat === clothCategory || (clothCategory === "pant" && (c.cat === "pant" || c.cat === "pants")));
+  }
+
+  // ── Base CSS transforms matching each position class (must match app.css) ──
+  const CF_POS_CLASSES = ["cf-center","cf-left-1","cf-right-1","cf-left-2","cf-right-2","cf-far-left","cf-far-right","cf-hidden"];
+  /** @type {Record<string, string>} */
+  const CF_BASE_TRANSFORMS = {
+    "cf-center":   "translate3d(0, 0, 0)",
+    "cf-left-1":   "translate3d(-75px, 0, 0)",
+    "cf-right-1":  "translate3d(75px, 0, 0)",
+    "cf-left-2":   "translate3d(-132px, 0, 0)",
+    "cf-right-2":  "translate3d(132px, 0, 0)",
+    "cf-far-left": "translate3d(-180px, 0, 0) scale(0.8)",
+    "cf-far-right":"translate3d(180px, 0, 0) scale(0.8)",
+  };
+
+  /**
+   * Get position class name for a diff offset, wrapping modularly.
+   * @param {number} rawDiff
+   * @param {number} total
+   */
+  function getCfPosClass(rawDiff, total) {
+    let diff = rawDiff % total;
+    if (diff > total / 2) diff -= total;
+    else if (diff < -total / 2) diff += total;
+    if (diff === 0) return "cf-center";
+    if (diff === -1) return "cf-left-1";
+    if (diff === 1) return "cf-right-1";
+    if (diff === -2) return "cf-left-2";
+    if (diff === 2) return "cf-right-2";
+    return diff < 0 ? "cf-far-left" : "cf-far-right";
+  }
+
+  /**
+   * Directly update the position class on every .cf-card in the viewport.
+   * Does NOT call App.render() — cards animate via CSS transitions.
+   * @param {HTMLElement} viewport
+   * @param {number} newIdx
+   */
+  function applyCfClasses(viewport, newIdx) {
+    const items = getActiveClothItems();
+    const total = items.length;
+    viewport.querySelectorAll(".cf-card").forEach((el) => {
+      const card = /** @type {HTMLElement} */ (el);
+      const cardIdx = parseInt(card.getAttribute("data-cloth-idx") || "0", 10);
+      const posClass = getCfPosClass(cardIdx - newIdx, total);
+      // Swap only the position class, keep "cf-card"
+      card.classList.remove(...CF_POS_CLASSES);
+      card.classList.add(posClass);
+    });
+  }
+
+  // ── Coverflow drag state ──
+  let cfStartX = 0;
+  let cfPointerId = /** @type {number | null} */ (null);
+  /** @type {HTMLElement | null} */
+  let cfViewport = null;
+  /** @type {HTMLElement | null} */
+  let cfDownTarget = null; // the element actually under the finger at pointerdown
+
+  // ── Category row swipe state ──
+  let catStartX = 0;
+  let isCatSwiping = false;
+
+  document.addEventListener("pointerdown", (e) => {
+    // Coverflow
+    const cf = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).closest(".coverflow-viewport"));
+    if (cf) {
+      cfViewport = cf;
+      cfStartX = e.clientX;
+      cfPointerId = e.pointerId;
+      cfDownTarget = /** @type {HTMLElement} */ (e.target);
+      cf.setPointerCapture(e.pointerId); // route all subsequent events here
+      return;
+    }
+    // Category row
+    const catRow = (/** @type {HTMLElement} */ (e.target)).closest(".avatar-category-row");
+    if (catRow) {
+      isCatSwiping = true;
+      catStartX = e.clientX;
+    }
+  });
+
+  // Real-time drag: move each visible card by the drag delta
+  document.addEventListener("pointermove", (e) => {
+    if (!cfViewport || e.pointerId !== cfPointerId) return;
+    const delta = e.clientX - cfStartX;
+    cfViewport.querySelectorAll(".cf-card:not(.cf-hidden)").forEach((el) => {
+      const card = /** @type {HTMLElement} */ (el);
+      // Find current position class to get its base transform
+      const posClass = CF_POS_CLASSES.find((c) => card.classList.contains(c)) || "cf-center";
+      const base = CF_BASE_TRANSFORMS[posClass] || "translate3d(0,0,0)";
+      // Suppress CSS transition while dragging for instant response
+      card.style.transition = "none";
+      card.style.transform = `${base} translateX(${delta}px)`;
+    });
+  });
+
+  document.addEventListener("pointerup", (e) => {
+    // ── 1. Coverflow ──
+    if (cfViewport !== null && e.pointerId === cfPointerId) {
+      const delta = cfStartX - e.clientX; // +ve = swiped left
+      const localViewport = cfViewport;
+      const localDownTarget = cfDownTarget;
+      cfViewport = null;
+      cfPointerId = null;
+      cfDownTarget = null;
+
+      const cards = /** @type {NodeListOf<HTMLElement>} */ (localViewport.querySelectorAll(".cf-card"));
+
+      if (Math.abs(delta) > 28) {
+        // ── SWIPE: navigate the carousel ──
+        const total = getActiveClothItems().length;
+        if (total > 1) {
+          if (delta > 0) {
+            selectedClothIndex = (selectedClothIndex + 1) % total;
+          } else {
+            selectedClothIndex = (selectedClothIndex - 1 + total) % total;
+          }
+        }
+
+        // Re-enable CSS transitions on cards (inline transform still holds drag position)
+        cards.forEach((card) => { card.style.transition = ""; });
+
+        // Update class-names to new positions (CSS target transform is now set by new class)
+        applyCfClasses(localViewport, selectedClothIndex);
+
+        // Two rAFs: first lets the browser paint the cards at the drag position with
+        // transitions re-enabled; second clears the inline override so the CSS transition
+        // animates from the painted drag position → the new class-defined position.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            cards.forEach((card) => { card.style.transform = ""; });
+          });
+        });
+
+      } else {
+        // ── TAP: snap cards back, then select the tapped card ──
+
+        // Instantly reset any inline transforms (no animation for snap-back)
+        cards.forEach((card) => {
+          card.style.transition = "none";
+          card.style.transform = "";
+        });
+
+        // Find which card was under the finger at pointerdown
+        const tappedCard = localDownTarget ? /** @type {HTMLElement | null} */ (localDownTarget.closest(".cf-card")) : null;
+
+        if (tappedCard) {
+          const newIdx = parseInt(tappedCard.getAttribute("data-cloth-idx") || "0", 10);
+          if (newIdx !== selectedClothIndex) {
+            selectedClothIndex = newIdx;
+            // Re-enable transitions in the next frame then update classes → animated snap
+            requestAnimationFrame(() => {
+              cards.forEach((card) => { card.style.transition = ""; });
+              applyCfClasses(localViewport, newIdx);
+            });
+          } else {
+            // Already selected: just re-enable transitions
+            requestAnimationFrame(() => {
+              cards.forEach((card) => { card.style.transition = ""; });
+            });
+          }
+        } else {
+          requestAnimationFrame(() => {
+            cards.forEach((card) => { card.style.transition = ""; });
+          });
+        }
+      }
+      return;
+    }
+
+    // ── 2. Category row swipe ──
+    if (isCatSwiping) {
+      isCatSwiping = false;
+      const diff = catStartX - e.clientX;
+      if (Math.abs(diff) > 40) {
+        const curCatIdx = clothCategories.findIndex((c) => c.id === clothCategory);
+        const catTotal = clothCategories.length;
+        if (curCatIdx !== -1) {
+          if (diff > 0) {
+            clothCategory = clothCategories[(curCatIdx + 1) % catTotal].id;
+          } else {
+            clothCategory = clothCategories[(curCatIdx - 1 + catTotal) % catTotal].id;
+          }
+          selectedClothIndex = 0;
+          if (App.render) App.render();
+        }
+      }
+    }
+  });
+
+  document.addEventListener("pointercancel", () => {
+    // Snap all cards back if drag is interrupted
+    if (cfViewport) {
+      cfViewport.querySelectorAll(".cf-card").forEach((el) => {
+        const card = /** @type {HTMLElement} */ (el);
+        card.style.transition = "none";
+        card.style.transform = "";
+        requestAnimationFrame(() => { card.style.transition = ""; });
+      });
+    }
+    cfViewport = null;
+    cfPointerId = null;
+    cfDownTarget = null;
+    isCatSwiping = false;
+  });
+
+  // Trackpad / mouse wheel loop scrolling for both coverflow and category row
+  let wheelTimeout = 0;
+  document.addEventListener("wheel", (e) => {
+    const cf = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).closest(".coverflow-viewport"));
+    const catRow = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).closest(".avatar-category-row"));
+    if (!cf && !catRow) return;
+
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(delta) < 20) return;
+
+    const now = Date.now();
+    if (now - wheelTimeout < 220) return; // debounce
+    wheelTimeout = now;
+
+    if (cf) {
+      const total = getActiveClothItems().length;
+      if (total <= 1) return;
+      if (delta > 0) {
+        selectedClothIndex = (selectedClothIndex + 1) % total;
+      } else {
+        selectedClothIndex = (selectedClothIndex - 1 + total) % total;
+      }
+      // Direct DOM update for smooth wheel scrolling too
+      applyCfClasses(cf, selectedClothIndex);
+    } else if (catRow) {
+      const curCatIdx = clothCategories.findIndex((c) => c.id === clothCategory);
+      const catTotal = clothCategories.length;
+      if (curCatIdx !== -1) {
+        clothCategory = clothCategories[
+          delta > 0 ? (curCatIdx + 1) % catTotal : (curCatIdx - 1 + catTotal) % catTotal
+        ].id;
+        selectedClothIndex = 0;
+        if (App.render) App.render();
+      }
+    }
+  }, { passive: true });
+
+  // Interactive drag & tap-to-expand for bottom sheet options
+  let isDraggingSheet = false;
+  let dragStartY = 0;
+  let dragStartHeight = 0;
+  /** @type {HTMLElement | null} */
+  let activeGrid = null;
+
+  document.addEventListener("pointerdown", (e) => {
+    const handleZone = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).closest(".sheet-handle-zone"));
+    if (!handleZone) return;
+    const sheet = /** @type {HTMLElement | null} */ (handleZone.closest(".avatar-bottom-sheet"));
+    if (!sheet) return;
+    const grid = /** @type {HTMLElement | null} */ (sheet.querySelector(".picker-grid, .picker-carousel"));
+    if (!grid) return;
+
+    isDraggingSheet = true;
+    dragStartY = e.clientY;
+    dragStartHeight = grid.getBoundingClientRect().height;
+    activeGrid = grid;
+    handleZone.setPointerCapture(e.pointerId);
+  });
+
+  document.addEventListener("pointermove", (e) => {
+    if (!isDraggingSheet || !activeGrid) return;
+    const deltaY = dragStartY - e.clientY; // pulling up increases height
+    if (Math.abs(deltaY) > 4) {
+      activeGrid.style.transition = "none";
+      const newHeight = Math.max(140, Math.min(460, dragStartHeight + deltaY));
+      activeGrid.style.maxHeight = `${newHeight}px`;
+    }
+  });
+
+  /** @param {PointerEvent} e */
+  const endSheetDrag = (e) => {
+    if (!isDraggingSheet || !activeGrid) return;
+    const deltaY = dragStartY - e.clientY;
+    activeGrid.style.transition = "";
+
+    if (Math.abs(deltaY) < 6) {
+      // Tap or click without drag toggles the expanded state
+      isSheetExpanded = !isSheetExpanded;
+      if (!isSheetExpanded) {
+        sheetCustomHeight = null;
+      } else if (!sheetCustomHeight) {
+        sheetCustomHeight = 350;
+      }
+    } else if (deltaY > 10) {
+      // Dragged OUT (upwards): stays out until dragged back down!
+      isSheetExpanded = true;
+      sheetCustomHeight = Math.max(240, Math.min(460, Math.round(dragStartHeight + deltaY)));
+    } else if (deltaY < -20) {
+      // Dragged back DOWN: collapses back down
+      isSheetExpanded = false;
+      sheetCustomHeight = null;
+    }
+
+    activeGrid.style.maxHeight = "";
+    isDraggingSheet = false;
+    activeGrid = null;
+    if (App.render) App.render();
+  };
+
+  document.addEventListener("pointerup", endSheetDrag);
+  document.addEventListener("pointercancel", endSheetDrag);
 
   /**
    * Router entry for Closet screen
