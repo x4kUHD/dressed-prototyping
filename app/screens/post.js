@@ -27,10 +27,7 @@
   App.toggleOutfitDetails = () => {
     App.postDraft.detailsOpen = !App.postDraft.detailsOpen;
     const summary = document.getElementById("postOutfitSummary");
-    if (summary) {
-      summary.style.display = App.postDraft.detailsOpen ? "inline-flex" : "none";
-      summary.textContent = App.postDraft.detailsOpen ? "3 items tagged" : "";
-    }
+    if (summary) summary.textContent = App.postDraft.detailsOpen ? "3 items tagged" : "Tag items";
   };
 
   /** Publish the new post to the OOTD feed */
@@ -53,6 +50,7 @@
       caption: finalCaption,
       song: songLabel,
       likes: 0,
+      comments: [],
       isLiked: false,
       dots: [
         { top: "38%", left: "48%", label: "Minimalist jacket" },
@@ -82,58 +80,42 @@
 
     return `
       <div class="post-create-view">
-        <div class="post-create-top-pill">
-          <div class="fit-check-pill">FIT CHECK</div>
-        </div>
-
         <div class="post-create-nav">
           <a href="${backHref}" class="post-back-btn" aria-label="Back">
-            ${App.icon("arrow-left")}
+            ${App.icon("chevron-left")}
           </a>
-          <span class="post-create-title">your post</span>
+          <span class="post-create-title">New post</span>
         </div>
 
-        <div class="post-create-media" aria-label="Outfit preview image"></div>
+        <div class="photo post-create-media" aria-label="Outfit preview image">${App.components.garment("outfit")}</div>
 
         <div class="post-create-fields">
-          <input
-            type="text"
-            class="post-caption-input"
-            id="postCaptionInput"
-            placeholder="add a caption..."
-            value="${App.postDraft.caption}"
-            oninput="App.postDraft.caption = this.value"
-            aria-label="Add a caption"
-          />
+          <label class="pfield">
+            <textarea
+              class="post-caption-input"
+              id="postCaptionInput"
+              rows="2"
+              placeholder="Write a caption…"
+              oninput="App.postDraft.caption = this.value"
+              aria-label="Caption"
+            >${App.postDraft.caption}</textarea>
+          </label>
 
-          <button type="button" class="post-row-item" onclick="App.cycleSong()" aria-label="Select audio">
-            <span class="post-row-left italic">
-              audio
-              ${App.icon("arrow-right")}
-            </span>
-            <span class="post-row-value">
-              <span id="postSongName">${App.postDraft.song}</span>
-              ${App.icon("music")}
-            </span>
+          <button type="button" class="prow" onclick="App.cycleSong()" aria-label="Choose audio">
+            <span class="prow-label">${App.icon("music")}Audio</span>
+            <span class="prow-value" id="postSongName">${App.postDraft.song}</span>
+            ${App.icon("chevron-right")}
           </button>
 
-          <button type="button" class="post-row-item" onclick="App.toggleOutfitDetails()" aria-label="Outfit details">
-            <span class="post-row-left">
-              outfit details
-              ${App.icon("arrow-right")}
-            </span>
-            <span
-              class="post-row-value"
-              id="postOutfitSummary"
-              style="font-size: 12px; color: var(--secondary-label); ${App.postDraft.detailsOpen ? "display: inline-flex;" : "display: none;"}"
-            >
-              3 items tagged
-            </span>
+          <button type="button" class="prow" onclick="App.toggleOutfitDetails()" aria-label="Outfit details">
+            <span class="prow-label">${App.icon("hanger-2")}Outfit details</span>
+            <span class="prow-value" id="postOutfitSummary">${App.postDraft.detailsOpen ? "3 items tagged" : "Tag items"}</span>
+            ${App.icon("chevron-right")}
           </button>
         </div>
 
         <button type="button" class="post-share-btn" onclick="App.shareCurrentPost()">
-          SHARE
+          Share
         </button>
       </div>`;
   };

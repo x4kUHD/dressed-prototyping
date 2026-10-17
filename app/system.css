@@ -1,0 +1,143 @@
+/* Design system layer. Loaded last so every screen shares one set of tokens and component styles.
+   Rules: SF type only; tone fills instead of outlines or shadows; three radii; one button, field and chip style. */
+
+:root {
+  --gutter: 20px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  --fill: rgba(0, 0, 0, 0.07);
+  --fill-strong: rgba(0, 0, 0, 0.13);
+  --photo: #dedede;
+  --photo-bg: #dedede;
+  --card-bg: #dedede;
+  --chip-bg: var(--fill);
+}
+
+/* ---------- Type ---------- */
+
+.large-title { font-size: 34px; font-weight: 700; letter-spacing: -0.4px; }
+.detail-title h1, .detail-heading { font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+.item-name, .dcard-name { font-size: 15px; font-weight: 600; }
+.item-category, .closet-count { font-size: 13px; color: var(--secondary-label); }
+
+/* ---------- Navigation: every sub-screen uses the same chevron + 17/600 back link ---------- */
+
+.back-link, .flow-back, .post-back-btn { font-size: 17px; font-weight: 600; color: var(--label); }
+.back-link svg { width: 24px; height: 24px; margin-left: -8px; }
+.post-create-nav { margin-top: 12px; }
+.post-create-media { aspect-ratio: 1 / 1; }
+.post-back-btn { width: auto; margin-left: -8px; }
+.post-back-btn svg { width: 24px; height: 24px; }
+.post-create-title { font-size: 17px; font-weight: 600; margin-left: 0; }
+.flow-body { padding: 8px var(--gutter); }
+.flow-foot { gap: 8px; padding: 12px var(--gutter) 8px; }
+.flow-foot .btn { margin-top: 0; } /* spacing comes from the footer gap only */
+.flow-foot .btn--text { min-height: 44px; }
+.app-screen--flush { padding-bottom: calc(var(--app-bottom) * 0.5); }
+
+/* ---------- Surfaces: photos and cards ---------- */
+
+.photo, .photo--card, .photo--outfit, .photo--crop, .photo--full,
+.item-photo, .detail-photo, .outfit-photo,
+.ootd-post-media, .ootd-grid-card, .post-create-media { border-radius: var(--r-lg); }
+.photo--thumb { border-radius: var(--r-sm); }
+.thumb .photo { border-radius: var(--r-md); }
+
+.photo, .item-photo, .detail-photo, .outfit-tile,
+.ootd-post-media, .ootd-grid-card, .post-create-media { background: var(--photo); }
+.photo--thumb, .thumb .photo { background: #ececec; }
+.outfit-tile:nth-child(even) { background: #cfcfcf; }
+.ootd-post-media, .ootd-grid-card, .ootd-grid-item { box-shadow: none; }
+.ootd-grid-item { background: var(--bg); border-radius: var(--r-md); }
+
+.confirm-panel { border: 0; background: var(--fill); border-radius: var(--r-lg); }
+.sticky-bar { border-top: 0; }
+
+/* ---------- Buttons ---------- */
+
+.btn { min-height: 50px; border: 0; border-radius: var(--r-md); font-size: 17px; font-weight: 600; }
+.btn--primary, .btn-primary { background: var(--label); color: var(--bg); border: 0; }
+.btn--secondary, .btn-secondary { background: var(--fill); color: var(--label); border: 0; }
+.btn--text { background: none; color: var(--label); font-weight: 500; }
+.btn--secondary:active, .btn-secondary:active { background: var(--fill-strong); }
+.btn--primary:active, .btn-primary:active { opacity: 0.85; }
+
+.post-share-btn {
+  height: 50px; border-radius: var(--r-md);
+  font-size: 17px; font-weight: 600; letter-spacing: 0; text-transform: none;
+}
+
+/* ---------- Fields ---------- */
+
+.search-field, .name-input, .dfield {
+  border: 0; border-radius: var(--r-md); background: var(--fill);
+}
+.name-input { height: 48px; }
+.search-field { color: var(--secondary-label); }
+
+/* ---------- Chips, pills and tags ---------- */
+
+.chips { gap: 6px; }
+.chip {
+  position: relative; min-height: 36px; padding: 0 10px; border: 0; border-radius: var(--r-pill);
+  background: var(--fill); font-size: 15px; font-weight: 500;
+}
+.chip::after { content: ""; position: absolute; inset: -4px 0; } /* keeps a 44pt hit area */
+.chip[aria-selected="true"] { background: var(--label); color: var(--bg); }
+.chip:not([aria-selected="true"]):active { background: var(--fill-strong); }
+
+.outfits-pill { min-height: 40px; border: 0; border-radius: var(--r-pill); background: var(--fill); }
+.tag { background: var(--fill); border-radius: var(--r-pill); }
+
+.fit-check-pill {
+  min-height: 32px; padding: 0 14px; border: 0; border-radius: var(--r-pill);
+  background: var(--fill); font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none;
+}
+
+/* ---------- OOTD and post: same type scale as the rest ---------- */
+
+.ootd-post-author { font-size: 15px; font-weight: 600; letter-spacing: 0; }
+.ootd-post-date { font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.ootd-post-caption, .post-caption-input, .post-row-item { font-size: 17px; line-height: 1.3; }
+.ootd-post-caption { font-size: 15px; }
+.ootd-post-song { font-size: 13px; }
+.ootd-pin-tooltip, .post-toast { font-size: 13px; }
+.post-row-left.italic { font-style: normal; }
+.post-row-left svg, .post-row-item svg { width: 20px; height: 20px; }
+.ootd-action-btn.comment-btn { color: var(--secondary-label); }
+.ootd-feed { gap: 28px; }
+
+/* Closet thumbnails use the same garment art as Discovery */
+.item-photo .garment, .detail-photo .garment, .outfit-tile .garment { width: 100%; height: 100%; padding: 10%; }
+.outfit-tile .garment { padding: 14%; }
+.detail-photo .garment { padding: 6%; }
+
+/* ---------- New post: photo, caption field, setting rows, pinned Share ---------- */
+
+.app-screen:has(.post-create-view) { display: flex; flex-direction: column; }
+.post-create-view { flex: 1; padding-bottom: 8px; }
+.post-create-media { aspect-ratio: 5 / 4; }
+.post-create-fields { gap: 8px; margin-top: 16px; }
+
+.pfield { display: block; padding: 12px 16px; border-radius: var(--r-md); background: var(--fill); }
+.post-caption-input { display: block; width: 100%; min-height: 48px; padding: 0; font: inherit; font-size: 17px; line-height: 1.3; resize: none; }
+.post-caption-input::placeholder { color: var(--secondary-label); opacity: 1; }
+
+.prow {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 0 12px 0 16px;
+  border: 0; border-radius: var(--r-md); background: var(--fill); color: var(--label);
+  font: inherit; font-size: 17px; text-align: left; transition: background-color 150ms ease;
+}
+.prow:active { background: var(--fill-strong); }
+.prow-label { display: flex; align-items: center; gap: 10px; flex: none; }
+.prow-label svg { width: 22px; height: 22px; }
+.prow-value { flex: 1; min-width: 0; text-align: right; color: var(--secondary-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow > svg { flex: none; width: 20px; height: 20px; color: var(--secondary-label); }
+
+.post-share-btn { margin-top: auto; }
+.post-create-fields + .post-share-btn { margin-top: auto; }
+.post-create-view { gap: 0; }
+.post-create-fields { margin-bottom: 20px; }

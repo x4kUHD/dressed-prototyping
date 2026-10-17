@@ -101,12 +101,10 @@
       <button class="btn btn-secondary" type="button" data-action="create-outfit" data-item="${item.id}">Create New Outfit</button>`;
   }
 
-  /** Tabler icon per closet category, shown on the placeholder photo until real photos exist. */
-  /** @type {Record<string, string>} */
-  const categoryIcons = { tops: "shirt", pants: "pants", skirts: "skirt", shoes: "shoe" };
-
+  /** Garment art per closet category, shown on the placeholder photo until real photos exist. @type {Record<string, string>} */
+  const garmentKinds = { tops: "top", pants: "pants", skirts: "skirt", shoes: "shoe" };
   /** @param {string} category */
-  const photoIcon = (category) => App.icon(categoryIcons[category] ?? "hanger-2");
+  const photoIcon = (category) => App.components.garment(garmentKinds[category] ?? "outfit");
 
   /** @param {string} t */
   const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");

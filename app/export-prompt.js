@@ -16,6 +16,9 @@
     photo: "photo",
     search: "magnifyingglass",
     user: "person",
+    "chevron-right": "chevron.right",
+    "arrow-up": "arrow.up",
+    "message-filled": "message.fill",
     backspace: "delete.left",
     "arrow-big-up": "shift",
   };

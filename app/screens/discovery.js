@@ -186,6 +186,10 @@
       caption: "caption (optional)",
       song: "song....",
       likes: 24,
+      comments: [
+        { author: "@mina.fits", text: "Those trousers are everything", when: "2h" },
+        { author: "@jun", text: "where are the loafers from?", when: "1h" },
+      ],
       isLiked: false,
       dots: [
         { top: "38%", left: "48%", label: "Vintage leather jacket" },
@@ -204,6 +208,7 @@
       caption: "caption (optional)",
       song: "song....",
       likes: 18,
+      comments: [{ author: "@sofia", text: "The belt ties it all together", when: "5h" }],
       isLiked: false,
       dots: [
         { top: "42%", left: "56%", label: "Structured blazer" },
@@ -291,9 +296,11 @@
             <button
               type="button"
               class="ootd-action-btn comment-btn"
-              aria-label="Comment"
+              onclick="App.openComments('${post.id}')"
+              aria-label="Comments, ${(post.comments || []).length}"
             >
               ${App.icon("message-filled")}
+              <span class="ootd-count" data-count="${post.id}">${(post.comments || []).length}</span>
             </button>
 
             <button
@@ -308,6 +315,86 @@
         </div>
       </article>`;
   }
+
+  /** @param {string} t */
+  const escHtml = (t) => t.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  /** Which post's comment sheet is open (null = closed). @type {{ open: string | null }} */
+  const commentUi = { open: null };
+
+  /** @param {any} post */
+  function commentSheetBody(post) {
+    const list = (post.comments || [])
+      .map(
+        (/** @type {{ author: string, text: string, when: string }} */ c) => `
+        <li class="ccomment">
+          <span class="cavatar">${App.icon("user-filled")}</span>
+          <div class="cbody">
+            <p class="cname">${escHtml(c.author)}<span class="cwhen">${escHtml(c.when)}</span></p>
+            <p class="ctext">${escHtml(c.text)}</p>
+          </div>
+        </li>`,
+      )
+      .join("");
+    return `
+      <div class="csheet-panel" role="dialog" aria-label="Comments">
+        <header class="csheet-head">
+          <h2>Comments</h2>
+          <button class="csheet-x" type="button" onclick="App.closeComments()" aria-label="Close comments">${App.icon("x")}</button>
+        </header>
+        <ul class="csheet-list">${list || '<li class="csheet-empty">No comments yet. Be the first.</li>'}</ul>
+        <form class="csheet-form" onsubmit="return App.addComment(event, '${post.id}')">
+          <input class="csheet-input" type="text" placeholder="Add a comment…" aria-label="Add a comment" autocomplete="off"
+            oninput="this.form.querySelector('.csheet-send').disabled = !this.value.trim()">
+          <button class="csheet-send" type="submit" aria-label="Post comment" disabled>${App.icon("arrow-up")}</button>
+        </form>
+      </div>`;
+  }
+
+  /** Re-render only the sheet, so the feed keeps its scroll position. */
+  function refreshCommentSheet() {
+    const root = document.querySelector("[data-csheet]");
+    if (!(root instanceof HTMLElement)) return;
+    const post = App.ootdPosts.find((p) => p.id === commentUi.open);
+    root.hidden = !post;
+    root.innerHTML = post ? commentSheetBody(post) : "";
+    const list = root.querySelector(".csheet-list");
+    if (list) list.scrollTop = list.scrollHeight;
+  }
+
+  /** @param {string} postId */
+  App.openComments = (postId) => {
+    commentUi.open = postId;
+    refreshCommentSheet();
+    const input = document.querySelector(".csheet-input");
+    if (input instanceof HTMLElement) input.focus();
+  };
+
+  App.closeComments = () => {
+    commentUi.open = null;
+    refreshCommentSheet();
+  };
+
+  /** @param {Event} e @param {string} postId */
+  App.addComment = (e, postId) => {
+    e.preventDefault();
+    const form = /** @type {HTMLFormElement} */ (e.target);
+    const input = /** @type {HTMLInputElement} */ (form.querySelector(".csheet-input"));
+    const text = input.value.trim();
+    const post = App.ootdPosts.find((p) => p.id === postId);
+    if (!text || !post) return false;
+    post.comments = post.comments || [];
+    post.comments.push({ author: "@you", text, when: "now" });
+    refreshCommentSheet();
+    document.querySelectorAll(`[data-count="${postId}"]`).forEach((el) => (el.textContent = String(post.comments.length)));
+    const next = document.querySelector(".csheet-input");
+    if (next instanceof HTMLElement) next.focus();
+    return false;
+  };
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && commentUi.open) App.closeComments();
+  });
 
   /**
    * Renders the complete OOTD feed screen
@@ -331,7 +418,7 @@
             </a>
           </div>
           <div class="ootd-header-center">
-            <div class="fit-check-pill">FIT CHECK</div>
+            <div class="fit-check-pill">Fit check</div>
           </div>
           <div class="ootd-header-right"></div>
         </header>
@@ -339,6 +426,10 @@
         <section class="ootd-feed" aria-label="OOTD Feed">
           ${itemsMarkup}
         </section>
+
+        <div class="csheet" data-csheet ${commentUi.open ? "" : "hidden"} onclick="if (event.target === this) App.closeComments()">
+          ${commentUi.open ? commentSheetBody(App.ootdPosts.find((p) => p.id === commentUi.open)) : ""}
+        </div>
       </div>`;
   }
 

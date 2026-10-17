@@ -15,7 +15,6 @@
   --app-top: var(--safe-top);
   --app-bottom: var(--safe-bottom);
 
-  --font-mono: "SF Mono", ui-monospace, Menlo, Monaco, "Courier New", monospace;
   --card-bg: #dcdcdc;
   --card-subtle: #eeeeee;
   --card-dark: #222222;
@@ -276,7 +275,6 @@
   padding: 4px 14px;
   border: 1.5px solid var(--label);
   border-radius: 9px;
-  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -357,7 +355,6 @@
 }
 
 .ootd-post-author {
-  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
   color: var(--label);
@@ -379,7 +376,6 @@
   position: absolute;
   top: 12px;
   left: 14px;
-  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   color: var(--label);
@@ -416,7 +412,6 @@
   transform: translateX(-50%);
   background: #111111;
   color: #ffffff;
-  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   padding: 4px 8px;
@@ -453,7 +448,6 @@
 }
 
 .ootd-post-caption {
-  font-family: var(--font-mono);
   font-size: 13.5px;
   color: var(--label);
   line-height: 1.35;
@@ -461,7 +455,6 @@
 }
 
 .ootd-post-song {
-  font-family: var(--font-mono);
   font-size: 11.5px;
   color: var(--secondary-label);
 }
@@ -580,7 +573,6 @@
 }
 
 .post-create-title {
-  font-family: var(--font-mono);
   font-size: 15px;
   font-weight: 700;
   color: var(--label);
@@ -611,7 +603,6 @@
   width: 100%;
   border: none;
   background: transparent;
-  font-family: var(--font-mono);
   font-size: 14px;
   color: var(--label);
   outline: none;
@@ -630,7 +621,6 @@
   display: flex;
   align-items: center;
   min-height: 44px;
-  font-family: var(--font-mono);
   font-size: 14px;
   color: var(--label);
   text-decoration: none;
@@ -674,7 +664,6 @@
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 1.2px;
@@ -700,7 +689,6 @@
   transform: translateX(-50%) translateY(20px);
   background: #111111;
   color: #ffffff;
-  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
   padding: 8px 16px;
@@ -764,17 +752,20 @@
 
 .chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-top: 14px;
+  overflow-x: auto; /* only kicks in if more categories than fit */
+  scrollbar-width: none;
 }
+.chips::-webkit-scrollbar { display: none; }
 
 .chip {
-  flex: none;
+  flex: 1 0 auto; /* one row; chips share the width evenly */
   min-height: 44px;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  justify-content: center;
+  padding: 0 12px;
   border-radius: 22px;
   border: 1px solid var(--separator);
   background: var(--chip-bg);
