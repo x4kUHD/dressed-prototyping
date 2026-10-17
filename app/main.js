@@ -14,7 +14,7 @@
   function render() {
     if (!app) return;
     const { id, sub } = currentRoute();
-    const full = App.fullscreen.has(id);
+    const full = App.fullscreen.has(id) || !!App.fullscreenFor[id]?.(sub);
     app.innerHTML = `
       <div class="app-root">
         <div class="app-screen${full ? " app-screen--flush" : ""}">${App.screens[id](sub)}</div>

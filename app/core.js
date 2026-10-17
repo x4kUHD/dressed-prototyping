@@ -5,6 +5,8 @@
 var App = {
   /** @type {Set<string>} tabs that hide the tab bar and run edge to edge */
   fullscreen: new Set(["camera"]),
+  /** @type {Record<string, (sub?: string) => boolean>} per-tab rule for hiding the tab bar on some sub-views */
+  fullscreenFor: {},
   /** @type {Record<string, string>} Tabler SVG markup by name (see icons.js) */
   icons: {},
   /** @type {Record<string, (...args: any[]) => string>} */
