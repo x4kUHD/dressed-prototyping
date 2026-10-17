@@ -716,3 +716,244 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+/* ---------- Closet ---------- */
+
+:root {
+  --card-bg: #ffffff;
+  --photo-bg: #d9d9d9;
+  --chip-bg: #ffffff;
+}
+
+.closet-header, .detail-top, .detail-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.closet-count { font-size: 13px; color: var(--secondary-label); }
+
+.icon-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--label);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.icon-button svg { width: 28px; height: 28px; }
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  margin-top: 12px;
+  padding: 0 14px;
+  border: 1px solid var(--label);
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 15px;
+  color: var(--secondary-label);
+}
+.search-field svg { width: 18px; height: 18px; }
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  flex: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 22px;
+  border: 1px solid var(--separator);
+  background: var(--chip-bg);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--label);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.chip[aria-selected="true"] { background: var(--label); border-color: var(--label); color: var(--bg); }
+
+.item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 12px;
+  margin-top: 16px;
+}
+
+.item-card { color: var(--label); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.item-photo {
+  aspect-ratio: 1 / 1.1;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--photo-bg);
+}
+.item-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.item-name { margin-top: 6px; font-size: 13px; font-weight: 600; }
+.item-category { font-size: 12px; color: var(--secondary-label); }
+
+.back-link {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  color: var(--label);
+  text-decoration: none;
+}
+.back-link svg { width: 22px; height: 22px; margin-left: -6px; }
+
+.detail-actions { display: flex; justify-content: space-between; }
+.detail-actions .icon-button { cursor: pointer; }
+.detail-photo { aspect-ratio: 1 / 0.85; border-radius: 14px; background: var(--photo-bg); }
+.detail-title { margin-top: 16px; }
+.detail-title h1 { font-size: 28px; font-weight: 700; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tag {
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 12px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary { margin-top: 20px; border: 0; background: var(--label); color: var(--bg); }
+.btn-secondary { border: 1px solid var(--label); background: var(--bg); color: var(--label); }
+
+.outfit-photo {
+  aspect-ratio: 1 / 1.1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.outfit-tile { background: var(--photo-bg); }
+.outfit-tile:nth-child(even) { background: #c4c4c4; }
+
+.pick-card { padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+.pick-card:disabled { cursor: default; opacity: 0.55; }
+.pick-photo { position: relative; }
+.pick-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--label);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--bg);
+}
+.pick-card[aria-pressed="true"] .pick-check { background: var(--label); }
+.pick-check svg { width: 16px; height: 16px; stroke-width: 3; }
+
+.sticky-bar {
+  position: sticky;
+  bottom: -16px;
+  margin: 16px -20px -16px;
+  padding: 12px 20px 16px;
+  background: var(--bg);
+  border-top: 0.5px solid var(--separator);
+}
+.sticky-bar .btn { margin-top: 0; }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.btn { display: flex; align-items: center; justify-content: center; text-decoration: none; }
+
+.outfits-pill {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--label);
+  border-radius: 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.outfits-pill svg { width: 22px; height: 22px; }
+.outfits-count {
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--label);
+  color: var(--bg);
+  font-size: 13px;
+}
+
+.btn-new { margin-top: 12px; }
+.outfit-meta { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.outfit-meta-text { min-width: 0; }
+.outfit-meta .item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.edit-button { flex: none; margin: -6px -10px -6px 0; }
+.edit-button svg { width: 20px; height: 20px; }
+
+.name-input {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin-top: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--label);
+  border-radius: 12px;
+  background: var(--bg);
+  font: inherit;
+  font-size: 17px;
+  color: var(--label);
+}
+.name-input::placeholder { color: var(--secondary-label); }
+
+.card-link { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.outfit-hero { margin-top: 4px; }
+.outfit-hero .outfit-photo { aspect-ratio: 1 / 0.85; }
+.detail-heading { margin-top: 16px; font-size: 28px; font-weight: 700; }
+
+/* Category icon centered on placeholder photos */
+.item-photo, .detail-photo, .outfit-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c8c8c;
+}
+.item-photo svg { width: 56px; height: 56px; }
+.detail-photo svg { width: 96px; height: 96px; }
+.outfit-tile svg { width: 36px; height: 36px; }
+
+.header-actions { display: flex; }
+.confirm-panel { margin-top: 20px; padding: 16px; border: 1px solid var(--label); border-radius: 14px; }
+.confirm-panel p { font-size: 15px; }
+.confirm-actions { display: flex; gap: 12px; }
+.confirm-actions .btn { margin-top: 12px; }

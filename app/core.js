@@ -11,6 +11,8 @@ var App = {
   components: {},
   /** @type {Record<string, (sub?: string) => string>} */
   screens: {},
+  /** Re-render the current route; set by main.js */
+  render: () => {},
 };
 
 /** Tagged with data-icon so the copy-context export can map it to an SF Symbol. @param {string} name key in App.icons */

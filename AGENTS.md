@@ -62,6 +62,7 @@ All prototype work happens in `app/`. Everything the user sees inside the phone 
 - Keep the original Tabler SVG attributes (`stroke="currentColor"`, `stroke-width`, 24x24 viewBox) so icons inherit text color. Resize with CSS `width`/`height`, not by editing the paths.
 - Use the `outline` style by default and the `filled` variant for selected or active states, as iOS does.
 - Render with `App.icon("name")`.
+- **Exception:** Tabler has no pants or skirt icon, so `pants` and `skirt` in `app/icons.js` are custom, drawn in Tabler's style (24x24, 2px round stroke). Replace them if Tabler adds equivalents. Don't add other custom icons without asking.
 
 ## Testing
 

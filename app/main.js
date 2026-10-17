@@ -2,7 +2,7 @@
 (() => {
   const app = document.getElementById("app");
 
-  /** @returns {{ id: string, sub?: string }} tab id plus optional sub-view, from `#tab/sub` */
+  /** @returns {{ id: string, sub?: string }} tab id plus optional sub-path, from `#tab/sub/...` */
   function currentRoute() {
     const raw = location.hash.slice(1);
     const parts = raw.split("/");
