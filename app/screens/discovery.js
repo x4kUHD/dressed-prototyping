@@ -228,7 +228,13 @@
     if (!post) return;
     post.isLiked = !post.isLiked;
     post.likes = (post.likes || 0) + (post.isLiked ? 1 : -1);
-    if (App.render) App.render();
+    // Update the button in place so the feed keeps its scroll position.
+    const btn = document.querySelector(`[data-like="${postId}"]`);
+    if (!btn) return;
+    btn.classList.toggle("liked", post.isLiked);
+    btn.setAttribute("aria-pressed", String(post.isLiked));
+    btn.setAttribute("aria-label", `${post.isLiked ? "Unlike" : "Like"}, ${post.likes} likes`);
+    btn.innerHTML = `${App.icon(post.isLiked ? "heart-filled" : "heart")}<span class="ootd-count">${post.likes}</span>`;
   };
 
   /**
@@ -310,11 +316,14 @@
 
             <button
               type="button"
-              class="ootd-action-btn ${post.isLiked ? "liked" : ""}"
+              class="ootd-action-btn like-btn ${post.isLiked ? "liked" : ""}"
+              data-like="${post.id}"
               onclick="App.toggleLike('${post.id}')"
-              aria-label="${post.isLiked ? "Unlike" : "Like"}"
+              aria-label="${post.isLiked ? "Unlike" : "Like"}, ${post.likes || 0} likes"
+              aria-pressed="${!!post.isLiked}"
             >
               ${App.icon(post.isLiked ? "heart-filled" : "heart")}
+              <span class="ootd-count">${post.likes || 0}</span>
             </button>
           </div>
         </div>
