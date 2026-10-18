@@ -194,6 +194,7 @@
       dots: [
         { top: "38%", left: "48%", label: "Vintage leather jacket" },
         { top: "54%", left: "54%", label: "Pleated wool trousers" },
+        { top: "47%", left: "50%", label: "Leather belt" },
         { top: "68%", left: "44%", label: "Chunky loafers" },
       ],
     },
@@ -268,6 +269,7 @@
         <button
           type="button"
           class="ootd-pin-dot"
+          data-cat="${categoryOf(dot.label)}"
           style="top: ${dot.top}; left: ${dot.left};"
           onclick="App.togglePinDot(event)"
           aria-label="${dot.label}"
@@ -284,6 +286,9 @@
         <div class="ootd-post-media">
           <span class="ootd-post-date">${post.date}</span>
           ${dotsMarkup}
+          <button type="button" class="shop-fab" onclick="App.shop.open('${post.id}')" aria-label="Find items in this outfit">
+            <span class="shop-fab-label">Find items</span>${App.icon("building-store")}
+          </button>
         </div>
 
         <div class="ootd-post-footer">
@@ -396,6 +401,200 @@
     if (e.key === "Escape" && commentUi.open) App.closeComments();
   });
 
+  // ---------- Shop the look: product sheet for the items tagged in a post ----------
+
+  /** @param {string} label tag label, e.g. "Pleated wool trousers" */
+  function categoryOf(label) {
+    const l = label.toLowerCase();
+    if (/jacket|blazer|coat/.test(l)) return "Jacket";
+    if (/belt/.test(l)) return "Belt";
+    if (/trouser|pant|jean/.test(l)) return "Pants";
+    if (/shoe|loafer|boot|sneaker/.test(l)) return "Shoes";
+    return "Top";
+  }
+
+  /** Sample catalogue per category: [brand, name, price, rating, reviews, sales]. @type {Record<string, [string, string, number, number, number, number][]>} */
+  const BANK = {
+    Jacket: [["Arlo & Finch", "Distressed leather jacket", 189, 4.6, 212, 540], ["Northline", "Oversized moto jacket", 245, 4.3, 98, 310], ["Hale", "Washed suede bomber", 168, 4.7, 340, 720], ["Studio Kiln", "Cropped leather overshirt", 132, 4.1, 57, 180]],
+    Pants: [["Maison Verde", "Pleated wool trousers", 98, 4.5, 164, 480], ["Hale", "Wide-leg tailored pants", 84, 4.2, 120, 390], ["Arlo & Finch", "Relaxed pleat trouser", 112, 4.7, 271, 610], ["Northline", "Washed baggy jeans", 76, 4.0, 88, 270]],
+    Belt: [["Hale", "Leather belt, silver buckle", 48, 4.6, 305, 910], ["Studio Kiln", "Woven leather belt", 56, 4.4, 142, 430], ["Maison Verde", "Classic dress belt", 64, 4.8, 410, 780], ["Northline", "Chain link belt", 39, 3.9, 61, 220]],
+    Shoes: [["Arlo & Finch", "Chunky leather loafer", 156, 4.5, 233, 520], ["Hale", "Penny loafer", 128, 4.3, 176, 350], ["Maison Verde", "Derby shoe", 174, 4.7, 289, 640], ["Northline", "Platform sneaker", 94, 4.1, 73, 290]],
+    Top: [["Studio Kiln", "Ribbed baby tee", 32, 4.6, 520, 1400], ["Hale", "Fitted tank", 28, 4.4, 330, 980], ["Arlo & Finch", "Cropped cardigan", 72, 4.5, 140, 410], ["Northline", "Boxy tee", 36, 4.2, 95, 330]],
+  };
+
+  /** @type {Record<string, string>} garment art per category */
+  const ART = { Jacket: "top", Pants: "pants", Belt: "necklace", Shoes: "shoe", Top: "top" };
+
+  /** @type {[string, string][]} */
+  const SORTS = [["best", "Best match"], ["low", "Price: Low to high"], ["high", "Price: High to low"], ["sales", "Best sellers"], ["rating", "Avg customer review"]];
+
+  /** Sheet state. cat: "all" or a category; saved holds product ids. */
+  const shopUi = { post: /** @type {string | null} */ (null), cat: "all", sort: "best", menu: false, expanded: false, saved: /** @type {Set<string>} */ (new Set()) };
+
+  /** Products for a post: the tagged item first (verified by the creator), then alternatives. @param {any} post */
+  function productsFor(post) {
+    const cats = [...new Set((post.dots || []).map((/** @type {{ label: string }} */ d) => categoryOf(d.label)))];
+    return cats.flatMap((cat) =>
+      BANK[cat].slice(0, 3).map(([brand, name, price, rating, reviews, sales], i) => ({
+        id: `${post.id}-${cat}-${i}`,
+        cat,
+        brand,
+        name: i === 0 ? ((post.dots || []).find((/** @type {{ label: string }} */ d) => categoryOf(d.label) === cat)?.label ?? name) : name,
+        price,
+        rating,
+        reviews,
+        sales,
+        verified: i === 0,
+      })),
+    );
+  }
+
+  /** @param {any} post */
+  function visibleProducts(post) {
+    const list = productsFor(post).filter((p) => shopUi.cat === "all" || p.cat === shopUi.cat);
+    const by = {
+      best: () => 0,
+      low: (/** @type {any} */ a, /** @type {any} */ b) => a.price - b.price,
+      high: (/** @type {any} */ a, /** @type {any} */ b) => b.price - a.price,
+      sales: (/** @type {any} */ a, /** @type {any} */ b) => b.sales - a.sales,
+      rating: (/** @type {any} */ a, /** @type {any} */ b) => b.rating - a.rating,
+    }[/** @type {"best" | "low" | "high" | "sales" | "rating"} */ (shopUi.sort)];
+    return list.slice().sort(by);
+  }
+
+  /** @param {any} p */
+  const productCard = (p) => `
+    <li class="pcard">
+      <div class="pcard-photo">${App.components.garment(ART[p.cat])}</div>
+      <div class="pcard-body">
+        <p class="pcard-brand">${p.brand}</p>
+        <a class="pcard-name" href="#discovery/ootd" onclick="return false">${p.name}</a>
+        <p class="pcard-rating">${App.icon("star")}${p.rating.toFixed(1)} <span>(${p.reviews})</span></p>
+        <div class="pcard-foot">
+          <p class="pcard-price">$${p.price}</p>
+          ${p.verified ? `<p class="pcard-verified">${App.icon("circle-check")}Verified by creator</p>` : ""}
+        </div>
+      </div>
+      <button class="pcard-save" type="button" aria-pressed="${shopUi.saved.has(p.id)}" aria-label="${shopUi.saved.has(p.id) ? "Saved" : "Save"} ${p.name}" onclick="App.shop.save('${p.id}', this)">
+        ${App.icon(shopUi.saved.has(p.id) ? "bookmark-filled" : "bookmark")}
+      </button>
+    </li>`;
+
+  /** @param {any} post */
+  function shopSheetBody(post) {
+    const cats = ["all", ...new Set(productsFor(post).map((p) => p.cat))];
+    const label = SORTS.find(([id]) => id === shopUi.sort)?.[1] ?? "";
+    return `
+      <div class="pshop-panel" role="dialog" aria-label="Find items">
+        <div class="pshop-grab" data-grab>
+          <button class="pshop-handle" type="button" onclick="App.shop.toggleExpand()" aria-label="${shopUi.expanded ? "Collapse" : "Pull up"} results">
+            ${shopUi.expanded ? App.icon("chevron-down") : '<i></i>'}
+          </button>
+        </div>
+        <div class="pshop-bar">
+          <button class="pshop-sort" type="button" aria-haspopup="listbox" aria-expanded="${shopUi.menu}" onclick="App.shop.toggleMenu()">
+            <span>Sort by: ${label}</span>${App.icon("chevron-down")}
+          </button>
+          <div class="pshop-chips">
+            ${cats.map((c) => `<button class="pshop-chip" type="button" aria-pressed="${c === shopUi.cat}" onclick="App.shop.setCat('${c}')">${c === "all" ? "All" : c}</button>`).join("")}
+          </div>
+        </div>
+        ${
+          shopUi.menu
+            ? `<ul class="pshop-menu" role="listbox" aria-label="Sort by">${SORTS.map(([id, text]) => `<li><button type="button" role="option" aria-selected="${id === shopUi.sort}" onclick="App.shop.setSort('${id}')">${text}</button></li>`).join("")}</ul>`
+            : ""
+        }
+        <ul class="pshop-list">${visibleProducts(post).map(productCard).join("")}</ul>
+      </div>`;
+  }
+
+  /** Re-render the sheet and mirror the chosen category onto the photo: dim it and ring the matching pin. */
+  function refreshShop() {
+    const root = document.querySelector("[data-pshop]");
+    if (!(root instanceof HTMLElement)) return;
+    const post = App.ootdPosts.find((p) => p.id === shopUi.post);
+    root.hidden = !post;
+    root.toggleAttribute("data-expanded", !!post && shopUi.expanded);
+    root.innerHTML = post ? shopSheetBody(post) : "";
+    document.querySelectorAll(".ootd-post-media").forEach((m) => m.classList.remove("is-dim"));
+    document.querySelectorAll(".ootd-pin-dot").forEach((d) => d.classList.remove("is-focus"));
+    if (post && shopUi.cat !== "all") {
+      const article = document.getElementById(post.id);
+      article?.querySelector(".ootd-post-media")?.classList.add("is-dim");
+      article?.querySelectorAll(`.ootd-pin-dot[data-cat="${shopUi.cat}"]`).forEach((d) => d.classList.add("is-focus"));
+    }
+  }
+
+  /** Scroll the feed so the post's photo sits above the half-open sheet. @param {string} postId */
+  function bringPostIntoView(postId) {
+    const sc = document.querySelector(".app-screen");
+    const el = document.getElementById(postId);
+    if (!(sc instanceof HTMLElement) || !el) return;
+    const k = sc.getBoundingClientRect().height / sc.offsetHeight || 1; // the phone frame can be CSS-zoomed
+    sc.scrollTo({ top: sc.scrollTop + (el.getBoundingClientRect().top - sc.getBoundingClientRect().top) / k - 56, behavior: "smooth" });
+  }
+
+  App.shop = {
+    /** @param {string} postId */
+    open(postId) {
+      Object.assign(shopUi, { post: postId, cat: "all", sort: "best", menu: false, expanded: false });
+      refreshShop();
+      bringPostIntoView(postId);
+    },
+    close() {
+      shopUi.post = null;
+      refreshShop();
+    },
+    /** @param {string} cat */
+    setCat(cat) {
+      shopUi.cat = cat;
+      shopUi.menu = false;
+      refreshShop();
+    },
+    toggleMenu() {
+      shopUi.menu = !shopUi.menu;
+      refreshShop();
+    },
+    /** @param {string} sort */
+    setSort(sort) {
+      shopUi.sort = sort;
+      shopUi.menu = false;
+      refreshShop();
+    },
+    toggleExpand() {
+      shopUi.expanded = !shopUi.expanded;
+      refreshShop();
+    },
+    /** Save or unsave a product without re-rendering, so the list keeps its scroll. @param {string} id @param {HTMLElement} btn */
+    save(id, btn) {
+      const on = !shopUi.saved.has(id);
+      if (on) shopUi.saved.add(id);
+      else shopUi.saved.delete(id);
+      btn.setAttribute("aria-pressed", String(on));
+      btn.setAttribute("aria-label", btn.getAttribute("aria-label")?.replace(/^(Saved|Save)/, on ? "Saved" : "Save") ?? "");
+      btn.innerHTML = App.icon(on ? "bookmark-filled" : "bookmark");
+    },
+  };
+
+  // Pull the sheet up or down by dragging its handle.
+  document.addEventListener("pointerdown", (e) => {
+    const grab = e.target instanceof Element ? e.target.closest("[data-grab]") : null;
+    if (!grab || !shopUi.post) return;
+    const startY = e.clientY;
+    /** @param {PointerEvent} up */
+    const onUp = (up) => {
+      removeEventListener("pointerup", onUp);
+      const dy = up.clientY - startY;
+      if (dy < -40 && !shopUi.expanded) App.shop.toggleExpand();
+      else if (dy > 40) (shopUi.expanded ? App.shop.toggleExpand : App.shop.close)();
+    };
+    addEventListener("pointerup", onUp);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && shopUi.post) App.shop.close();
+  });
+
   /**
    * Renders the complete OOTD feed screen
    * @returns {string}
@@ -426,6 +625,10 @@
         <section class="ootd-feed" aria-label="OOTD Feed">
           ${itemsMarkup}
         </section>
+
+        <div class="pshop" data-pshop ${shopUi.post ? "" : "hidden"} ${shopUi.expanded ? "data-expanded" : ""} onclick="if (event.target === this) App.shop.close()">
+          ${shopUi.post ? shopSheetBody(App.ootdPosts.find((p) => p.id === shopUi.post)) : ""}
+        </div>
 
         <div class="csheet" data-csheet ${commentUi.open ? "" : "hidden"} onclick="if (event.target === this) App.closeComments()">
           ${commentUi.open ? commentSheetBody(App.ootdPosts.find((p) => p.id === commentUi.open)) : ""}
