@@ -300,7 +300,7 @@
         <div class="ootd-post-footer">
           <div class="ootd-post-meta">
             <div class="ootd-post-caption">${post.caption}</div>
-            <div class="ootd-post-song">${post.song}</div>
+            ${post.song ? `<div class="ootd-post-song">${post.song}</div>` : ""}
           </div>
 
           <div class="ootd-post-actions">

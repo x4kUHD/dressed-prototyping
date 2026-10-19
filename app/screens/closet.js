@@ -24,6 +24,9 @@
     { id: "white-sneakers", name: "White Tennis Shoes", category: "shoes", tags: ["Shoes", "Sneakers", "White", "Casual"] },
   ];
 
+  /** Shared with the New post screen's piece picker. */
+  App.closetItems = items;
+
   /** @type {{ id: string, name: string, itemIds: string[] }[]} */
   const outfits = [
     { id: "weekend-casual", name: "Weekend Casual", itemIds: ["green-tee", "black-jeans"] },
@@ -97,8 +100,8 @@
         <a class="icon-button" href="#closet/outfits/${item.id}" aria-label="View outfits using this item">${App.icon("hanger-2")}</a>
       </div>
       <div class="tags">${item.tags.map((t) => `<span class="tag">${t}</span>`).join("")}</div>
-      <a class="btn btn-primary" href="#closet/outfits/pick/${item.id}">Add to Outfit</a>
-      <button class="btn btn-secondary" type="button" data-action="create-outfit" data-item="${item.id}">Create New Outfit</button>`;
+      <a class="btn btn-primary" href="#closet/outfits/pick/${item.id}">Add to existing outfit</a>
+      <button class="btn btn-secondary" type="button" data-action="create-outfit" data-item="${item.id}">New outfit from piece</button>`;
   }
 
   /** Garment art per closet category, shown on the placeholder photo until real photos exist. @type {Record<string, string>} */
@@ -192,7 +195,7 @@
       }`;
   }
 
-  /** Outfits picked so far in the "Add to Outfit" picker, and the item they're for. */
+  /** Outfits picked so far in the "Add to existing outfit" picker, and the item they're for. */
   /** @type {Set<string>} */
   const picked = new Set();
   let pickerItem = "";
@@ -208,7 +211,7 @@
     const n = picked.size;
     return `
       <header class="detail-top"><a class="back-link" href="#closet/item/${item.id}">${App.icon("chevron-left")}${item.name}</a></header>
-      <h1 class="large-title">Add to Outfit</h1>
+      <h1 class="large-title">Add to existing outfit</h1>
       <p class="closet-count">Select one or more outfits for ${item.name}</p>
       <div class="item-grid">
         ${outfits
