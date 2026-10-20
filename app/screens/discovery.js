@@ -8,9 +8,6 @@
   /** Style tags offered as suggestions; the first three not yet used or dismissed are shown. */
   const POOL = ["Y2K", "Colorful", "Trendy", "Comfortable", "Monotone", "Vintage", "Minimal", "Streetwear"];
 
-  /** Sample feed: garment art per box. */
-  const ITEMS = ["top", "pants", "skirt", "shoe", "necklace", "outfit", "top", "pants"];
-
   const KEY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
   /** Module state, so the search survives a tab switch. @type {{ chips: string[], dismissed: Set<string>, query: string, phase: "idle" | "loading" }} */
@@ -70,7 +67,7 @@
 
   const grid = () => `
     <div class="dgrid">
-      ${ITEMS.map((kind, i) => `<div class="photo photo--card" style="--i:${i}">${App.components.garment(kind)}</div>`).join("")}
+      ${App.item.catalog.map((p, i) => `<a class="photo photo--card" style="--i:${i}" href="#discovery/item/${i}" aria-label="${esc(p.name)}, $${p.price}">${App.components.garment(p.kind)}</a>`).join("")}
     </div>`;
 
   /** Stand-in for the system keyboard (hidden on a real phone, where the native one appears). */
@@ -646,6 +643,8 @@
 
   /** @param {string} [sub] sub-view from the URL hash (`#discovery/ootd`, `#discovery/ootd/create`) */
   App.screens.discovery = (sub) => {
+    const m = sub && /^item\/(\d+)$/.exec(sub);
+    if (m && App.item.catalog[+m[1]]) return App.item.page(+m[1]);
     if (sub === "ootd/create" || sub === "create") return App.screens.post ? App.screens.post("from-ootd") : "";
     const active = sub === "ootd" ? "ootd" : "discovery";
     const seg = App.components.segmented("discovery", segments, active);

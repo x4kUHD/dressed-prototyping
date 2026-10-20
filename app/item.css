@@ -1,0 +1,44 @@
+/* Discovery item page: greyscale, tone steps instead of lines. */
+
+.app-screen:has(.item) { overflow: hidden; }
+.item { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.item-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding: 0 var(--gutter) 24px; }
+.item-scroll::-webkit-scrollbar { display: none; }
+
+/* Back button floating over the photo */
+.item-top { position: sticky; top: 0; z-index: 3; height: 0; }
+.item-round {
+  width: 44px; height: 44px; margin: 8px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.9); color: var(--label); text-decoration: none;
+  transition: transform 150ms ease;
+}
+.item-round svg { width: 22px; height: 22px; }
+.item-round:active { transform: scale(0.92); }
+
+.item-photo { width: 100%; aspect-ratio: 1 / 1; border-radius: var(--r-md); }
+.item-photo .garment { width: 100%; height: 100%; padding: 14%; }
+
+.item-info { padding-top: 16px; }
+.item-brand { font-size: 13px; font-weight: 600; color: var(--secondary-label); text-transform: uppercase; letter-spacing: 0.04em; }
+.item-title { margin-top: 4px; font-size: 24px; line-height: 1.2; font-weight: 700; }
+
+.item-closet { width: 100%; margin-top: 16px; gap: 8px; border: 0; font-family: inherit; font-size: 17px; min-height: 48px; }
+.item-closet svg { width: 20px; height: 20px; }
+.item-closet[aria-pressed="true"] { background: var(--fill); color: var(--label); }
+
+.item-h { margin: 28px 0 8px; font-size: 17px; font-weight: 700; }
+
+/* Where to buy */
+.shops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.shop {
+  min-height: 60px; padding: 8px 12px 8px 16px; border-radius: var(--r-md); background: var(--fill);
+  display: flex; align-items: center; gap: 12px; color: var(--label); text-decoration: none;
+  transition: background-color 150ms ease;
+}
+.shop:active { background: rgba(0, 0, 0, 0.14); }
+.shop-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.shop-name { font-size: 17px; font-weight: 600; }
+.shop-note { font-size: 13px; color: var(--secondary-label); }
+.shop-price { font-size: 17px; font-weight: 600; }
+.shop svg { width: 20px; height: 20px; flex: none; color: var(--secondary-label); }
