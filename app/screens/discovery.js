@@ -95,7 +95,6 @@
     ${field()}
     ${themes()}
     ${state.phase === "loading" ? loading() : `${suggestions()}${grid()}`}
-    <a class="davatar" href="#avatar" aria-label="Avatar">${App.icon("user-filled")}</a>
     ${keyboard()}`;
 
   /** Re-render the search UI in place, keeping focus and caret if the field had it. @param {HTMLElement} root */
