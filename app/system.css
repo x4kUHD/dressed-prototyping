@@ -42,16 +42,15 @@
 
 .photo, .photo--card, .photo--outfit, .photo--crop, .photo--full,
 .item-photo, .detail-photo, .outfit-photo,
-.ootd-post-media, .ootd-grid-card, .post-create-media { border-radius: var(--r-lg); }
+.ootd-post-media, .post-create-media { border-radius: var(--r-lg); }
 .photo--thumb { border-radius: var(--r-sm); }
 .thumb .photo { border-radius: var(--r-md); }
 
 .photo, .item-photo, .detail-photo, .outfit-tile,
-.ootd-post-media, .ootd-grid-card, .post-create-media { background: var(--photo); }
+.ootd-post-media, .post-create-media { background: var(--photo); }
 .photo--thumb, .thumb .photo { background: #ececec; }
 .outfit-tile:nth-child(even) { background: #cfcfcf; }
-.ootd-post-media, .ootd-grid-card, .ootd-grid-item { box-shadow: none; }
-.ootd-grid-item { background: var(--bg); border-radius: var(--r-md); }
+.ootd-post-media { box-shadow: none; }
 
 .confirm-panel { border: 0; background: var(--fill); border-radius: var(--r-lg); }
 .sticky-bar { border-top: 0; }

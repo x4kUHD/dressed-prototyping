@@ -195,10 +195,6 @@
       ],
     },
     {
-      id: "post-grid",
-      type: "grid",
-    },
-    {
       id: "post-2",
       author: "@user38483",
       date: "9.23.26",
@@ -242,22 +238,6 @@
     const target = /** @type {HTMLElement} */ (event.currentTarget);
     target.classList.toggle("active");
   };
-
-  /**
-   * Renders the 2x2 grid collage card
-   * @returns {string}
-   */
-  function renderGridCard() {
-    return `
-      <div class="ootd-grid-card" aria-label="Outfit breakdown">
-        <div class="ootd-grid-2x2">
-          <div class="ootd-grid-item"></div>
-          <div class="ootd-grid-item"></div>
-          <div class="ootd-grid-item"></div>
-          <div class="ootd-grid-item"></div>
-        </div>
-      </div>`;
-  }
 
   /**
    * Renders a single OOTD photo post
@@ -606,7 +586,7 @@
    */
   function renderOOTDFeed() {
     const itemsMarkup = App.ootdPosts
-      .map((item) => (item.type === "grid" ? renderGridCard() : renderPost(item)))
+      .map(renderPost)
       .join("");
 
     return `
