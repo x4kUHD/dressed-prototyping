@@ -31,6 +31,25 @@
     document.querySelectorAll("[data-keep]").forEach((el) => (el.scrollLeft = keep[el.getAttribute("data-keep") ?? ""] ?? 0));
   }
 
+  /** Stack the try-on cards like a cover flow: the one in the middle is biggest and lightest, the rest shrink and darken behind it. */
+  function layoutCarousel() {
+    const car = document.querySelector(".av-carousel");
+    if (!(car instanceof HTMLElement)) return;
+    const mid = car.scrollLeft + car.clientWidth / 2;
+    car.querySelectorAll(".av-card").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid) / 72; // 72px ≈ one step between cards
+      const t = Math.min(d, 3);
+      el.style.setProperty("--s", String(Math.max(0.55, 1 - 0.17 * t).toFixed(3)));
+      el.style.setProperty("--g", String(Math.round(217 - 30 * t)));
+      el.style.zIndex = String(100 - Math.round(d * 10));
+    });
+  }
+
+  document.addEventListener("scroll", (e) => e.target instanceof Element && e.target.classList.contains("av-carousel") && layoutCarousel(), true);
+  const appEl = document.getElementById("app");
+  if (appEl) new MutationObserver(layoutCarousel).observe(appEl, { childList: true, subtree: true });
+
   App.avatar = {
     /** @param {string} cat */
     setCustom(cat) {
@@ -61,6 +80,19 @@
       state.cat = cat;
       history.replaceState(null, "", cat === "saved" ? "#avatar/saved" : "#avatar/tryon");
       rerender();
+      const car = document.querySelector(".av-carousel");
+      if (car) {
+        car.scrollLeft = 0;
+        layoutCarousel();
+      }
+    },
+    /** Tap a card: bring it to the middle first, wear it once it is there. @param {HTMLElement} card @param {string} kind @param {number} i */
+    tap(card, kind, i) {
+      const car = card.parentElement;
+      if (!car) return;
+      const delta = card.offsetLeft + card.offsetWidth / 2 - car.scrollLeft - car.clientWidth / 2;
+      if (Math.abs(delta) < card.offsetWidth * 0.3) App.avatar.wear(kind, i);
+      else car.scrollTo({ left: car.scrollLeft + delta, behavior: "smooth" });
     },
     /** @param {HTMLInputElement} input */
     setZoom(input) {
@@ -137,7 +169,7 @@
         : Array.from(
             { length: App.avatarItemCount },
             (_, i) =>
-              `<button class="av-card" type="button" aria-pressed="${state.worn[cat] === i}" aria-label="${NAMES[cat]} ${i + 1}" onclick="App.avatar.wear('${cat}', ${i})">${App.components.avatarSwatch(cat, i)}</button>`,
+              `<button class="av-card" type="button" aria-pressed="${state.worn[cat] === i}" aria-label="${NAMES[cat]} ${i + 1}" onclick="App.avatar.tap(this, '${cat}', ${i})">${App.components.avatarSwatch(cat, i)}</button>`,
           ).join("");
     return `
       <div ${root()}>
