@@ -4,7 +4,7 @@
 
   const categories = [
     { id: "all", label: "All" },
-    { id: "tops", label: "Tops" },
+    { id: "tops", label: "Shirts" },
     { id: "pants", label: "Pants" },
     { id: "skirts", label: "Skirts" },
     { id: "shoes", label: "Shoes" },
@@ -51,34 +51,39 @@
     return category === "all" ? `${n} items` : `${n} ${categoryLabel(category)}`;
   };
 
-  /** @param {string} activeId */
+  /** Closet home: category chips (Outfits first), label-free tiles, and a floating search pill. @param {string} activeId */
   function list(activeId) {
     const shown = activeId === "all" ? items : items.filter((i) => i.category === activeId);
     return `
-      <header class="closet-header">
-        <div>
-          <h1 class="large-title">My Closet</h1>
-          <p class="closet-count">${countLabel(activeId)}</p>
-        </div>
-        ${outfitsButton()}
-      </header>
-      <div class="search-field">${App.icon("search")}<span>Search Your Closet</span></div>
-      <div class="chips">
-        ${categories.map((c) => App.components.chip(c.label, c.id === "all" ? "#closet" : `#closet/${c.id}`, c.id === activeId)).join("")}
-      </div>
-      <div class="item-grid">
-        ${shown
-          .map(
-            (i) => `
-          <a class="item-card" href="#closet/item/${i.id}">
-            <div class="item-photo" role="img" aria-label="${i.name}">${photoIcon(i.category)}</div>
-            <div class="item-name">${i.name}</div>
-            <div class="item-category">${categoryLabel(i.category)}</div>
-          </a>`,
-          )
+      <h1 class="visually-hidden">My Closet, ${countLabel(activeId)}</h1>
+      <nav class="cchips" aria-label="Closet sections">
+        <a class="cchip" href="#closet/outfits">Outfits</a>
+        ${categories
+          .map((c) => `<a class="cchip" href="${c.id === "all" ? "#closet" : `#closet/${c.id}`}" aria-current="${c.id === activeId}">${c.label}</a>`)
           .join("")}
-      </div>`;
+      </nav>
+      <div class="ctiles">
+        ${shown.map((i) => `<a class="ctile" href="#closet/item/${i.id}" aria-label="${esc(i.name)}" data-name="${esc(i.name.toLowerCase())}">${photoIcon(i.category)}</a>`).join("")}
+      </div>
+      <p class="ctiles-empty" hidden>No pieces match.</p>
+      <label class="float-search">
+        ${App.icon("search")}
+        <input type="search" placeholder="Search Your Closet" aria-label="Search your closet" autocomplete="off" data-closet-search>
+      </label>`;
   }
+
+  // Filter the tiles in place as you type, so the field keeps focus.
+  document.addEventListener("input", (e) => {
+    if (!(e.target instanceof HTMLInputElement) || !e.target.matches("[data-closet-search]")) return;
+    const q = e.target.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll(".ctile").forEach((t) => {
+      const hit = !q || (t instanceof HTMLElement && (t.dataset.name ?? "").includes(q));
+      t.toggleAttribute("hidden", !hit);
+      if (hit) shown++;
+    });
+    document.querySelector(".ctiles-empty")?.toggleAttribute("hidden", shown > 0);
+  });
 
   /** @param {string} id */
   function detail(id) {
