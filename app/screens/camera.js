@@ -10,28 +10,55 @@
 
   const pieces = ["T-shirt", "Jeans", "Sneakers"];
 
-  /** "Select a match" for one detected piece; search and skip both move to the next piece. @param {number} n 1-based */
+  /** Garment art per detected piece, and where its detection box sits on the outfit photo (% of the square stage). */
+  const PIECE = [
+    { kind: "top", box: { left: 22, top: 8, width: 56, height: 36 } },
+    { kind: "pants", box: { left: 33, top: 35, width: 34, height: 44 } },
+    { kind: "shoe", box: { left: 22, top: 80, width: 56, height: 16 } },
+  ];
+
+  /** Sample matches per piece: [name, brand · price]. */
+  const MATCHES = [
+    [["Boxy cotton tee", "Arlo & Finch · $36"], ["Ribbed baby tee", "Studio Kiln · $32"], ["Heavyweight crew tee", "Northline · $40"]],
+    [["Washed baggy jeans", "Northline · $76"], ["Relaxed straight jeans", "Hale · $88"], ["Wide-leg denim", "Maison Verde · $94"]],
+    [["Platform sneaker", "Northline · $94"], ["Low court sneaker", "Hale · $110"], ["Canvas trainer", "Studio Kiln · $62"]],
+  ];
+
+  /**
+   * Share to dressed: the shared photo with the detected piece boxed, its closest matches,
+   * and a footer to go back, jump between pieces, or search by hand. Picking a match or Skip moves on.
+   * @param {number} n 1-based piece index
+   */
   const piece = (n) => {
     const next = n < pieces.length ? `camera/pieces/${n + 1}` : "camera/import";
     const prev = n > 1 ? `camera/pieces/${n - 1}` : "camera";
+    const { kind, box } = PIECE[n - 1];
     return `
-      <div class="flow">
-        <header class="flow-bar">
-          ${back(prev, "Select a match")}
-          <button class="flow-text-btn" type="button">Report inaccuracy</button>
-        </header>
-        <div class="flow-body">
-          ${photo("photo--crop", "outfit")}
-          <p class="step">Piece ${n} of ${pieces.length}<span aria-hidden="true"> · </span><strong>${pieces[n - 1]}</strong></p>
-          <div class="match-list">
-            ${[1, 2, 3]
-              .map((i) => `<a class="match" href="#${next}">${photo("photo--thumb", pieces[n - 1])}<span>${pieces[n - 1]} match ${i}</span></a>`)
-              .join("")}
+      <div class="flow share">
+        <div class="share-body">
+          <div class="share-photo">
+            <div class="share-stage">
+              ${App.components.garment("outfit")}
+              <div class="share-box" style="left:${box.left}%;top:${box.top}%;width:${box.width}%;height:${box.height}%" aria-label="Detected ${pieces[n - 1]}"></div>
+            </div>
+            <a class="share-skip" href="#${next}">Skip</a>
           </div>
+          <ul class="share-matches" aria-label="Matches for ${pieces[n - 1]}">
+            ${MATCHES[n - 1]
+              .map(([name, sub]) => `
+              <li><a class="share-match" href="#${next}">
+                <span class="share-thumb">${App.components.garment(kind)}</span>
+                <span><span class="share-name">${name}</span><span class="share-sub">${sub}</span></span>
+              </a></li>`)
+              .join("")}
+          </ul>
         </div>
-        <footer class="flow-foot">
-          <button class="btn btn--secondary" type="button" data-search="open">Search</button>
-          <a class="btn btn--text" href="#${next}">Skip item</a>
+        <footer class="share-foot">
+          <a class="share-back" href="#${prev}">Back</a>
+          <nav class="share-pieces" aria-label="Detected pieces">
+            ${PIECE.map((p, i) => `<a class="share-piece" href="#camera/pieces/${i + 1}" aria-label="${pieces[i]}" ${i === n - 1 ? 'aria-current="step"' : ""}>${App.components.garment(p.kind)}</a>`).join("")}
+          </nav>
+          <button class="share-search" type="button" data-search="open" aria-label="Search for ${pieces[n - 1].toLowerCase()}">${App.icon("search")}</button>
         </footer>
         <div class="search-overlay" hidden>
           <div class="search-sheet" role="dialog" aria-label="Search">

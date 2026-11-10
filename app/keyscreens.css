@@ -1,0 +1,199 @@
+/* Key screens: Closet home, Discovery (For You / Friends) and Share to dressed.
+   Loaded after system.css. Greyscale only; the mockups' purple accent maps to black. */
+
+:root {
+  --tile: #f2f2f2;
+  --float-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------- Floating search pill (Closet, For You) ---------- */
+
+.float-search {
+  position: sticky; bottom: 4px; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  height: 44px; margin: 16px 0 0; padding: 0 16px; border-radius: var(--r-pill);
+  background: var(--bg); box-shadow: var(--float-shadow);
+  font-size: 15px; font-weight: 500; color: var(--label); text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.float-search svg { width: 18px; height: 18px; flex: none; }
+.float-search input {
+  width: 9.5em; min-width: 0; border: 0; outline: 0; background: none;
+  font: inherit; color: var(--label); text-align: center;
+}
+.float-search input::placeholder { color: var(--label); }
+.float-search:focus-within input { width: 100%; text-align: left; }
+.float-search:focus-within input::placeholder { color: var(--secondary-label); }
+.float-search input::-webkit-search-cancel-button { display: none; }
+a.float-search:active { transform: scale(0.98); }
+
+/* Fade the grid out under the pill */
+.float-search::before {
+  content: ""; position: absolute; z-index: -1; left: -20px; right: -20px; bottom: -4px; height: 72px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff 70%);
+  pointer-events: none;
+}
+
+/* ---------- Closet home ---------- */
+
+.cchips {
+  display: flex; gap: 8px; margin: 8px -20px 0; padding: 4px 20px 8px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.cchips::-webkit-scrollbar { display: none; }
+.cchip {
+  flex: none; min-height: 36px; display: flex; align-items: center; padding: 0 16px;
+  border-radius: var(--r-pill); background: var(--bg); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+  font-size: 14px; font-weight: 500; color: var(--label); text-decoration: none;
+  -webkit-tap-highlight-color: transparent; position: relative;
+}
+.cchip::after { content: ""; position: absolute; inset: -4px 0; } /* 44pt hit area */
+.cchip[aria-current="true"] { background: #e3e3e3; box-shadow: none; font-weight: 600; }
+.cchip:active { opacity: 0.6; }
+
+.ctiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.ctile {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 22px; background: var(--tile); -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms ease;
+}
+.ctile .garment { width: 68%; height: 68%; }
+.ctile:active { transform: scale(0.97); }
+.ctiles-empty { margin-top: 24px; text-align: center; font-size: 15px; color: var(--secondary-label); }
+
+/* ---------- Discovery header ---------- */
+
+.dhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.dhead-round {
+  position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--tile); color: var(--secondary-label); font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.dhead-round::after { content: ""; position: absolute; inset: -4px; } /* 44pt hit area */
+.dhead-round svg { width: 20px; height: 20px; }
+.dhead-round:active { opacity: 0.6; }
+
+.pillseg { display: flex; padding: 3px; border-radius: var(--r-pill); background: var(--tile); }
+.pillseg-item {
+  position: relative; min-width: 66px; height: 32px; padding: 0 16px;
+  display: flex; align-items: center; justify-content: center; border-radius: var(--r-pill);
+  font-size: 14px; font-weight: 500; color: var(--secondary-label); text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.pillseg-item::after { content: ""; position: absolute; inset: -6px 0; }
+.pillseg-item[aria-current="true"] { background: var(--bg); color: var(--label); font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }
+
+/* ---------- For You ---------- */
+
+.fy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.fy-tile { aspect-ratio: 1; border-radius: var(--r-md); animation: rise 360ms ease-out both; animation-delay: calc(var(--i) * 50ms); }
+.fy-tile:nth-child(4n + 2), .fy-tile:nth-child(4n + 3) { background: #cfcfcf; }
+
+/* ---------- Friends ---------- */
+
+.app-screen:has(.frtrack) { display: flex; flex-direction: column; }
+.frtrack {
+  flex: 1; min-height: 0; display: flex; gap: 12px; margin: 16px -20px 0; padding: 0 20px 4px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; scrollbar-width: none;
+}
+.frtrack::-webkit-scrollbar { display: none; }
+.frcard {
+  flex: 0 0 calc(100% - 8px); min-height: 0; display: flex; flex-direction: column;
+  scroll-snap-align: start; overflow: hidden;
+  border-radius: 20px; background: var(--bg); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.frcard-head { flex: none; padding: 12px 14px; font-size: 13px; font-weight: 500; }
+.frcard-head span { color: var(--secondary-label); font-weight: 400; }
+.frcard-media {
+  position: relative; flex: 1; min-height: 0; margin: 0 6px;
+  display: flex; align-items: center; justify-content: center; border-radius: 4px; background: var(--photo);
+}
+.frcard-media .garment { width: 80%; height: 80%; }
+.frcard-shop {
+  position: absolute; right: 10px; bottom: 10px; width: 44px; height: 44px; border: 0; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--label);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); cursor: pointer;
+}
+.frcard-shop svg { width: 22px; height: 22px; }
+.frcard-shop:active { transform: scale(0.94); }
+.frcard-foot { flex: none; display: flex; align-items: center; padding: 4px 6px 4px 14px; }
+.frcard-caption { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.frcard-foot .ootd-action-btn svg { width: 20px; height: 20px; }
+.frcard-foot .ootd-count { font-size: 13px; color: var(--label); }
+
+.frdots { flex: none; display: flex; justify-content: center; gap: 6px; padding: 14px 0 4px; }
+.frdots i { width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; transition: background-color 150ms ease, transform 150ms ease; }
+.frdots i.on { background: var(--label); transform: scale(1.3); }
+
+/* Search sub-screen reached from the For You pill */
+.dsearch-top { margin-top: 4px; }
+
+/* ---------- Share to dressed (camera match step) ---------- */
+
+.share { background: #f4f4f4; }
+.app-screen:has(.share) { background: #f4f4f4; }
+.screen:has(.share) { background: #f4f4f4; }
+.share-body { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 8px 8px; }
+
+.share-photo {
+  position: relative; aspect-ratio: 1 / 0.86; display: flex; justify-content: center;
+  border-radius: 16px; background: var(--photo); overflow: hidden;
+}
+.share-stage { position: relative; height: 100%; aspect-ratio: 1; }
+.share-stage .garment { display: block; width: 100%; height: 100%; }
+.share-box {
+  position: absolute; border: 3px solid #fff; border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 260ms ease;
+}
+.share-skip {
+  position: absolute; right: 10px; bottom: 10px; min-height: 36px; padding: 0 16px;
+  display: flex; align-items: center; border-radius: var(--r-md);
+  background: var(--bg); color: var(--label); font-size: 13px; font-weight: 600; text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.share-skip::after { content: ""; position: absolute; inset: -4px; }
+.share-skip:active { transform: scale(0.96); }
+
+.share-matches { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.share-match {
+  display: flex; align-items: center; gap: 14px; overflow: hidden;
+  border-radius: var(--r-md); background: var(--bg); color: var(--label); text-decoration: none;
+  transition: background-color 150ms ease;
+}
+.share-match:active { background: var(--tile); }
+.share-thumb { flex: none; width: 88px; height: 64px; display: flex; align-items: center; justify-content: center; background: #e9e9e9; }
+.share-thumb .garment { width: 60px; height: 60px; }
+.share-name { display: block; font-size: 15px; font-weight: 600; }
+.share-sub { display: block; margin-top: 2px; font-size: 13px; color: var(--secondary-label); }
+
+.share-foot { flex: none; display: flex; align-items: center; gap: 8px; padding: 8px 8px 4px; }
+.share-back {
+  min-height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: var(--r-md);
+  background: #e3e3e3; color: var(--label); font-size: 15px; font-weight: 600; text-decoration: none;
+}
+.share-back:active { background: #d6d6d6; }
+.share-pieces { flex: 1; display: flex; gap: 6px; }
+.share-piece {
+  width: 36px; height: 44px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-sm); background: var(--bg); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.share-piece .garment { width: 30px; height: 30px; }
+.share-piece[aria-current="step"] { box-shadow: inset 0 0 0 2px var(--label); }
+.share-search {
+  flex: none; width: 44px; height: 44px; border: 0; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--label); color: var(--bg); cursor: pointer;
+}
+.share-search svg { width: 22px; height: 22px; }
+.share-search:active { transform: scale(0.94); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fy-tile { animation: none; }
+  .share-box { transition: none; }
+}

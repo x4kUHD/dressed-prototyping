@@ -1,8 +1,9 @@
 // @ts-check
 (() => {
+  /** Discovery feeds; "ootd" is kept as an alias for Friends so old links still land. */
   const segments = [
-    { id: "discovery", label: "Discovery" },
-    { id: "ootd", label: "OOTD" },
+    { id: "for-you", label: "For You", href: "#discovery" },
+    { id: "friends", label: "Friends", href: "#discovery/friends" },
   ];
 
   /** Style tags offered as suggestions; the first three not yet used or dismissed are shown. */
@@ -179,7 +180,7 @@
       id: "post-1",
       author: "@user38483",
       date: "9.23.26",
-      caption: "caption (optional)",
+      caption: "Leather and pleats for the gallery",
       song: "song....",
       likes: 24,
       comments: [
@@ -198,7 +199,7 @@
       id: "post-2",
       author: "@user38483",
       date: "9.23.26",
-      caption: "caption (optional)",
+      caption: "Office to dinner, no change",
       song: "song....",
       likes: 18,
       comments: [{ author: "@sofia", text: "The belt ties it all together", when: "5h" }],
@@ -206,6 +207,65 @@
       dots: [
         { top: "42%", left: "56%", label: "Structured blazer" },
         { top: "58%", left: "42%", label: "Tailored belt" },
+        { top: "74%", left: "50%", label: "Derby shoes" },
+      ],
+    },
+    {
+      id: "post-3",
+      author: "@janedoe123",
+      date: "11.21.26",
+      caption: "Station run in the baby tank",
+      song: "",
+      likes: 21,
+      comments: [
+        { author: "@mina.fits", text: "the bag!!", when: "3h" },
+        { author: "@jun", text: "jeans link pls", when: "1h" },
+      ],
+      isLiked: false,
+      dots: [
+        { top: "38%", left: "50%", label: "Ribbed tank top" },
+        { top: "60%", left: "48%", label: "Washed baggy jeans" },
+      ],
+    },
+    {
+      id: "post-4",
+      author: "@mina.fits",
+      date: "11.20.26",
+      caption: "Layered for the cold snap",
+      song: "",
+      likes: 34,
+      comments: [{ author: "@sofia", text: "Perfect proportions", when: "6h" }],
+      isLiked: false,
+      dots: [
+        { top: "40%", left: "50%", label: "Oversized moto jacket" },
+        { top: "62%", left: "50%", label: "Wide-leg tailored pants" },
+      ],
+    },
+    {
+      id: "post-5",
+      author: "@jun",
+      date: "11.19.26",
+      caption: "Thrifted everything today",
+      song: "",
+      likes: 12,
+      comments: [],
+      isLiked: false,
+      dots: [
+        { top: "40%", left: "50%", label: "Boxy tee" },
+        { top: "72%", left: "50%", label: "Platform sneaker" },
+      ],
+    },
+    {
+      id: "post-6",
+      author: "@sofia",
+      date: "11.18.26",
+      caption: "Dinner fit",
+      song: "",
+      likes: 47,
+      comments: [{ author: "@janedoe123", text: "obsessed", when: "1d" }],
+      isLiked: false,
+      dots: [
+        { top: "42%", left: "50%", label: "Structured blazer" },
         { top: "74%", left: "50%", label: "Derby shoes" },
       ],
     },
@@ -230,79 +290,29 @@
   };
 
   /**
-   * Toggle outfit pin dot tooltip on touch
-   * @param {Event} event
-   */
-  App.togglePinDot = (event) => {
-    event.stopPropagation();
-    const target = /** @type {HTMLElement} */ (event.currentTarget);
-    target.classList.toggle("active");
-  };
-
-  /**
-   * Renders a single OOTD photo post
+   * One Friends card: author and date, the photo with a shop button, then caption, comments and likes.
    * @param {any} post
    * @returns {string}
    */
-  function renderPost(post) {
-    const dotsMarkup = (post.dots || [])
-      .map(
-        (/** @type {{ top: string, left: string, label: string }} */ dot) => `
-        <button
-          type="button"
-          class="ootd-pin-dot"
-          data-cat="${categoryOf(dot.label)}"
-          style="top: ${dot.top}; left: ${dot.left};"
-          onclick="App.togglePinDot(event)"
-          aria-label="${dot.label}"
-        >
-          <span class="ootd-pin-tooltip">${dot.label}</span>
-        </button>`
-      )
-      .join("");
-
+  function friendCard(post) {
+    const comments = (post.comments || []).length;
     return `
-      <article class="ootd-post" id="${post.id}">
-        <div class="ootd-post-author">${post.author}</div>
-
-        <div class="ootd-post-media">
-          <span class="ootd-post-date">${post.date}</span>
-          ${dotsMarkup}
-          <button type="button" class="shop-fab" onclick="App.shop.open('${post.id}')" aria-label="Find items in this outfit">
-            <span class="shop-fab-label">Find items</span>${App.icon("building-store")}
+      <article class="frcard" id="${post.id}">
+        <header class="frcard-head">${escHtml(post.author)}<span> · ${escHtml(post.date)}</span></header>
+        <div class="frcard-media">
+          ${App.components.garment("outfit")}
+          <button type="button" class="frcard-shop" onclick="App.shop.open('${post.id}')" aria-label="Find items in this outfit">${App.icon("building-store")}</button>
+        </div>
+        <footer class="frcard-foot">
+          <p class="frcard-caption">${escHtml(post.caption)}</p>
+          <button type="button" class="ootd-action-btn comment-btn" onclick="App.openComments('${post.id}')" aria-label="Comments, ${comments}">
+            ${App.icon("message-circle")}<span class="ootd-count" data-count="${post.id}">${comments}</span>
           </button>
-        </div>
-
-        <div class="ootd-post-footer">
-          <div class="ootd-post-meta">
-            <div class="ootd-post-caption">${post.caption}</div>
-            ${post.song ? `<div class="ootd-post-song">${post.song}</div>` : ""}
-          </div>
-
-          <div class="ootd-post-actions">
-            <button
-              type="button"
-              class="ootd-action-btn comment-btn"
-              onclick="App.openComments('${post.id}')"
-              aria-label="Comments, ${(post.comments || []).length}"
-            >
-              ${App.icon("message-filled")}
-              <span class="ootd-count" data-count="${post.id}">${(post.comments || []).length}</span>
-            </button>
-
-            <button
-              type="button"
-              class="ootd-action-btn like-btn ${post.isLiked ? "liked" : ""}"
-              data-like="${post.id}"
-              onclick="App.toggleLike('${post.id}')"
-              aria-label="${post.isLiked ? "Unlike" : "Like"}, ${post.likes || 0} likes"
-              aria-pressed="${!!post.isLiked}"
-            >
-              ${App.icon(post.isLiked ? "heart-filled" : "heart")}
-              <span class="ootd-count">${post.likes || 0}</span>
-            </button>
-          </div>
-        </div>
+          <button type="button" class="ootd-action-btn like-btn ${post.isLiked ? "liked" : ""}" data-like="${post.id}" onclick="App.toggleLike('${post.id}')"
+            aria-label="${post.isLiked ? "Unlike" : "Like"}, ${post.likes || 0} likes" aria-pressed="${!!post.isLiked}">
+            ${App.icon(post.isLiked ? "heart-filled" : "heart")}<span class="ootd-count">${post.likes || 0}</span>
+          </button>
+        </footer>
       </article>`;
   }
 
@@ -453,7 +463,7 @@
       <div class="pcard-photo">${App.components.garment(ART[p.cat])}</div>
       <div class="pcard-body">
         <p class="pcard-brand">${p.brand}</p>
-        <a class="pcard-name" href="#discovery/ootd" onclick="return false">${p.name}</a>
+        <a class="pcard-name" href="#discovery/friends" onclick="return false">${p.name}</a>
         <p class="pcard-rating">${App.icon("star")}${p.rating.toFixed(1)} <span>(${p.reviews})</span></p>
         <div class="pcard-foot">
           <p class="pcard-price">$${p.price}</p>
@@ -580,56 +590,68 @@
     if (e.key === "Escape" && shopUi.post) App.shop.close();
   });
 
-  /**
-   * Renders the complete OOTD feed screen
-   * @returns {string}
-   */
-  function renderOOTDFeed() {
-    const itemsMarkup = App.ootdPosts
-      .map(renderPost)
-      .join("");
+  /** Avatar initial, For You / Friends switch, and new post. @param {string} active segment id */
+  const head = (active) => `
+    <header class="dhead">
+      <a class="dhead-round" href="#avatar" aria-label="Your avatar">E</a>
+      <nav class="pillseg" aria-label="Discovery feeds">
+        ${segments.map((g) => `<a class="pillseg-item" href="${g.href}" aria-current="${g.id === active}">${g.label}</a>`).join("")}
+      </nav>
+      <a class="dhead-round" href="#discovery/create" aria-label="New post">${App.icon("plus")}</a>
+    </header>`;
 
+  /** For You: two-column photo grid with a floating search pill that opens the full search. */
+  const forYou = () => `
+    ${head("for-you")}
+    <div class="fy-grid">
+      ${App.item.catalog
+        .map((p, i) => `<a class="photo fy-tile" style="--i:${i}" href="#discovery/item/${i}" aria-label="${esc(p.name)}, $${p.price}">${App.components.garment(p.kind)}</a>`)
+        .join("")}
+    </div>
+    <a class="float-search" href="#discovery/search">${App.icon("search")}<span>Search Styles</span></a>`;
+
+  /** Friends: one post per card, swiped sideways, with page dots under the track. */
+  const friends = () => `
+    ${head("friends")}
+    <div class="frtrack" data-frtrack aria-label="Friends' posts">${App.ootdPosts.map(friendCard).join("")}</div>
+    <div class="frdots" aria-hidden="true">${App.ootdPosts.map((_, i) => `<i${i === 0 ? ' class="on"' : ""}></i>`).join("")}</div>
+
+    <div class="pshop" data-pshop ${shopUi.post ? "" : "hidden"} ${shopUi.expanded ? "data-expanded" : ""} onclick="if (event.target === this) App.shop.close()">
+      ${shopUi.post ? shopSheetBody(App.ootdPosts.find((p) => p.id === shopUi.post)) : ""}
+    </div>
+    <div class="csheet" data-csheet ${commentUi.open ? "" : "hidden"} onclick="if (event.target === this) App.closeComments()">
+      ${commentUi.open ? commentSheetBody(App.ootdPosts.find((p) => p.id === commentUi.open)) : ""}
+    </div>`;
+
+  // Light the page dot for the card nearest the left edge of the track.
+  document.addEventListener(
+    "scroll",
+    (e) => {
+      const track = e.target;
+      if (!(track instanceof HTMLElement) || !track.matches("[data-frtrack]")) return;
+      const first = track.firstElementChild;
+      const step = first instanceof HTMLElement ? first.offsetWidth + 12 : track.clientWidth;
+      const at = Math.round(track.scrollLeft / step);
+      track.parentElement?.querySelectorAll(".frdots i").forEach((d, i) => d.classList.toggle("on", i === at));
+    },
+    true,
+  );
+
+  /** Full search: the existing suggestions, theme chips, results grid and keyboard. */
+  const search = () => {
+    setTimeout(() => document.querySelector(".disc input")?.focus());
     return `
-      <div class="ootd-container">
-        <header class="ootd-header">
-          <div class="ootd-header-left">
-            <a
-              href="#discovery/ootd/create"
-              class="ootd-icon-btn"
-              aria-label="Create Post"
-            >
-              ${App.icon("plus")}
-            </a>
-          </div>
-          <div class="ootd-header-center">
-            <div class="fit-check-pill">Fit check</div>
-          </div>
-          <div class="ootd-header-right"></div>
-        </header>
+      <header class="dsearch-top"><a class="back-link" href="#discovery">${App.icon("chevron-left")}For You</a></header>
+      <div class="disc" data-disc>${body()}</div>`;
+  };
 
-        <section class="ootd-feed" aria-label="OOTD Feed">
-          ${itemsMarkup}
-        </section>
-
-        <div class="pshop" data-pshop ${shopUi.post ? "" : "hidden"} ${shopUi.expanded ? "data-expanded" : ""} onclick="if (event.target === this) App.shop.close()">
-          ${shopUi.post ? shopSheetBody(App.ootdPosts.find((p) => p.id === shopUi.post)) : ""}
-        </div>
-
-        <div class="csheet" data-csheet ${commentUi.open ? "" : "hidden"} onclick="if (event.target === this) App.closeComments()">
-          ${commentUi.open ? commentSheetBody(App.ootdPosts.find((p) => p.id === commentUi.open)) : ""}
-        </div>
-      </div>`;
-  }
-
-  /** @param {string} [sub] sub-view from the URL hash (`#discovery/ootd`, `#discovery/ootd/create`) */
+  /** @param {string} [sub] "", "friends" (or legacy "ootd"), "search", "create", or "item/<n>" */
   App.screens.discovery = (sub) => {
     const m = sub && /^item\/(\d+)$/.exec(sub);
     if (m && App.item.catalog[+m[1]]) return App.item.page(+m[1]);
     if (sub === "ootd/create" || sub === "create") return App.screens.post ? App.screens.post("from-ootd") : "";
-    const active = sub === "ootd" ? "ootd" : "discovery";
-    const seg = App.components.segmented("discovery", segments, active);
-    if (active === "ootd") return `${seg}${renderOOTDFeed()}`;
+    if (sub === "friends" || sub === "ootd") return friends();
     state.phase = "idle"; // a search left mid-load is done when you return
-    return `${seg}<div class="disc" data-disc>${body()}</div>`;
+    return sub === "search" ? search() : forYou();
   };
 })();

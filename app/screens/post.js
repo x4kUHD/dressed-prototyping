@@ -138,7 +138,7 @@
     }
 
     Object.assign(d, { caption: "", shot: false, uploaded: false, source: "pieces", cat: "all" });
-    location.hash = "#discovery/ootd";
+    location.hash = "#discovery/friends";
   };
 
   /**
@@ -147,7 +147,7 @@
    * @returns {string}
    */
   App.screens.post = (sub) => {
-    const backHref = sub === "from-camera" ? "#camera" : "#discovery/ootd";
+    const backHref = sub === "from-camera" ? "#camera" : "#discovery/friends";
     if (sub === "from-camera") Object.assign(draft(), { source: "selfie", shot: true });
 
     return `
